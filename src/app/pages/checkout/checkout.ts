@@ -144,9 +144,9 @@ export class Checkout implements OnInit {
 
     this.orderService.placeOrder(orderPayload).subscribe({
       next: async (res) => {
-        if (this.paymentMethod === 'cod') {
+        if (this.paymentMethod === 'cod' || res.order.totalAmount === 0) {
           this.isProcessing = false;
-          this.toastService.success('Order placed successfully via Cash on Delivery!');
+          this.toastService.success(res.order.totalAmount === 0 ? 'Order placed successfully!' : 'Order placed successfully via Cash on Delivery!');
           this.router.navigate(['/user/profile/orders']);
         } else {
           await this.processRazorpayPayment(res.order._id, res.order.totalAmount);

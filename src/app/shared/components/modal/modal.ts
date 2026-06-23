@@ -17,20 +17,33 @@ export class ModalComponent {
   onConfirm() {
     const state = this.modalService.modalState();
     if (state.type === 'confirm') {
-      this.modalService.closeModal(true);
+      if (state.autoClose !== false) {
+        this.modalService.closeModal(true);
+      } else {
+        if (state.resolve) {
+          const resolve = state.resolve;
+          this.modalService.modalState.update(s => ({ ...s, resolve: undefined }));
+          resolve(true);
+        }
+      }
     } else {
-      this.modalService.closeModal(this.promptValue);
-      this.promptValue = '';
+      if (state.autoClose !== false) {
+        this.modalService.closeModal(this.promptValue);
+        this.promptValue = '';
+      } else {
+        if (state.resolve) {
+          const resolve = state.resolve;
+          this.modalService.modalState.update(s => ({ ...s, resolve: undefined }));
+          resolve(this.promptValue);
+        }
+      }
     }
   }
 
   onCancel() {
     const state = this.modalService.modalState();
-    if (state.type === 'confirm') {
-      this.modalService.closeModal(false);
-    } else {
-      this.modalService.closeModal(null);
-      this.promptValue = '';
-    }
+    if (state.isLoading) return;
+    this.modalService.closeModal(false);
+    this.promptValue = '';
   }
 }

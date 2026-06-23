@@ -20,12 +20,12 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngIf="loading">
+          <tr *ngIf="loading()">
             <td colspan="6" class="text-center py-5">
               <div class="spinner-border text-primary" role="status"></div>
             </td>
           </tr>
-          <tr *ngIf="!loading && products.length === 0">
+          <tr *ngIf="!loading() && products.length === 0">
             <td colspan="6" class="text-center py-5 text-muted">
               No products found.
             </td>

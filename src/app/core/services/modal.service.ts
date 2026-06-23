@@ -7,6 +7,8 @@ export interface ModalState {
   message: string;
   inputPlaceholder?: string;
   resolve?: (value: any) => void;
+  isLoading?: boolean;
+  autoClose?: boolean;
 }
 
 @Injectable({
@@ -20,19 +22,21 @@ export class ModalService {
     message: ''
   });
 
-  confirm(title: string, message: string): Promise<boolean> {
+  confirm(title: string, message: string, autoClose = true): Promise<boolean> {
     return new Promise((resolve) => {
       this.modalState.set({
         isOpen: true,
         type: 'confirm',
         title,
         message,
-        resolve
+        resolve,
+        isLoading: false,
+        autoClose
       });
     });
   }
 
-  prompt(title: string, message: string, inputPlaceholder?: string): Promise<string | null> {
+  prompt(title: string, message: string, inputPlaceholder?: string, autoClose = true): Promise<string | null> {
     return new Promise((resolve) => {
       this.modalState.set({
         isOpen: true,
@@ -40,14 +44,20 @@ export class ModalService {
         title,
         message,
         inputPlaceholder,
-        resolve
+        resolve,
+        isLoading: false,
+        autoClose
       });
     });
   }
 
-  closeModal(result: any) {
+  setLoading(isLoading: boolean) {
+    this.modalState.update(state => ({ ...state, isLoading }));
+  }
+
+  closeModal(result?: any) {
     const currentState = this.modalState();
-    if (currentState.resolve) {
+    if (currentState.resolve && result !== undefined) {
       currentState.resolve(result);
     }
     this.modalState.set({

@@ -63,6 +63,9 @@ export const routes: Routes = [
       { path: 'categories', loadComponent: () => import('./pages/admin/categories/admin-categories/admin-categories').then(c => c.AdminCategories) },
       { path: 'categories/add', loadComponent: () => import('./pages/admin/categories/admin-category-form/admin-category-form').then(c => c.AdminCategoryForm) },
       { path: 'categories/edit/:id', loadComponent: () => import('./pages/admin/categories/admin-category-form/admin-category-form').then(c => c.AdminCategoryForm) },
+      { path: 'coupons', loadComponent: () => import('./pages/admin/coupons/admin-coupons/admin-coupons').then(m => m.AdminCoupons) },
+      { path: 'coupons/new', loadComponent: () => import('./pages/admin/coupons/admin-coupon-form/admin-coupon-form').then(m => m.AdminCouponForm) },
+      { path: 'coupons/edit/:id', loadComponent: () => import('./pages/admin/coupons/admin-coupon-form/admin-coupon-form').then(m => m.AdminCouponForm) },
       { path: 'reviews', loadComponent: () => import('./pages/admin/reviews/reviews').then(m => m.AdminReviews) },
       { path: 'orders', loadComponent: () => import('./pages/admin/orders/admin-orders/admin-orders').then(c => c.AdminOrders) },
       { path: 'users', loadComponent: () => import('./pages/admin/users/admin-users/admin-users').then(c => c.AdminUsers) }

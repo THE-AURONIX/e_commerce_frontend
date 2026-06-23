@@ -1,0 +1,43 @@
+.text-xs {
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+
+.table th {
+  border-bottom: 2px solid #f8f9fa;
+}
+
+.table td {
+  border-bottom: 1px solid #f8f9fa;
+}
+
+.btn-light {
+  background-color: #f8f9fa;
+  border-color: #f8f9fa;
+}
+
+.btn-light:hover {
+  background-color: #e9ecef;
+  border-color: #e9ecef;
+}
+
+.badge {
+  font-weight: 500;
+  padding: 0.5em 0.8em;
+}
+
+.bg-success-subtle {
+  background-color: #d1e7dd !important;
+}
+
+.text-success {
+  color: #0f5132 !important;
+}
+
+.bg-danger-subtle {
+  background-color: #f8d7da !important;
+}
+
+.text-danger {
+  color: #842029 !important;
+}

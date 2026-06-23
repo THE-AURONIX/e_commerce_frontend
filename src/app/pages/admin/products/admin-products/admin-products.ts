@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ProductService } from '../../../../core/services/product.service';
@@ -19,7 +19,7 @@ export class AdminProducts implements OnInit {
   modalService = inject(ModalService);
 
   products: Product[] = [];
-  loading = true;
+  loading = signal<boolean>(true);
   currentPage = 1;
   totalPages = 1;
   totalProducts = 0;
@@ -33,16 +33,16 @@ export class AdminProducts implements OnInit {
   }
 
   loadProducts() {
-    this.loading = true;
+    this.loading.set(true);
     this.productService.getProducts({ page: this.currentPage, limit: 10, all: 'true' }).subscribe({
       next: (res) => {
         this.products = res.products;
         this.totalPages = res.totalPages;
         this.totalProducts = res.total;
-        this.loading = false;
+        this.loading.set(false);
       },
       error: () => {
-        this.loading = false;
+        this.loading.set(false);
         this.toastService.error('Failed to load products');
       },
     });
@@ -58,17 +58,21 @@ export class AdminProducts implements OnInit {
   async deleteProduct(id: string) {
     const confirmed = await this.modalService.confirm(
       'Delete Product',
-      'Are you sure you want to delete this product?'
+      'Are you sure you want to delete this product?',
+      false // disable autoClose
     );
     
     if (confirmed) {
+      this.modalService.setLoading(true);
       this.productService.deleteProduct(id).subscribe({
         next: () => {
           this.toastService.success('Product deleted successfully');
+          this.modalService.closeModal();
           this.loadProducts(); // Reload list
         },
         error: (err) => {
           this.toastService.error('Failed to delete product: ' + (err.error?.message || 'Unknown error'));
+          this.modalService.closeModal();
         },
       });
     }

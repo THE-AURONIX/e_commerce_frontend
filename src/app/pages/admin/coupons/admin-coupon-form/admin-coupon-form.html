@@ -1,0 +1,134 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <a routerLink="/admin/coupons" class="text-decoration-none text-secondary d-inline-flex align-items-center gap-1 mb-2 fs-7 fw-medium">
+      <i class="bi bi-arrow-left"></i> Back to Coupons
+    </a>
+    <h2 class="fw-bold mb-0">{{ isEditMode ? 'Edit Coupon' : 'Create New Coupon' }}</h2>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-8">
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+      <div class="card-body p-4 p-lg-5">
+        
+        <div *ngIf="loading() && isEditMode" class="text-center py-5">
+          <div class="spinner-border text-dark" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+
+        <form [formGroup]="couponForm" (ngSubmit)="onSubmit()" *ngIf="!loading() || !isEditMode">
+          <h5 class="fw-bold mb-4">General Information</h5>
+          
+          <div class="row g-4 mb-4">
+            <div class="col-md-6">
+              <label class="form-label fw-medium text-secondary small">Coupon Code <span class="text-danger">*</span></label>
+              <input type="text" class="form-control form-control-lg bg-light border-0 text-uppercase" 
+                     formControlName="code" placeholder="e.g. SUMMER50">
+              <div class="text-danger small mt-1" *ngIf="couponForm.get('code')?.invalid && couponForm.get('code')?.touched">
+                Valid code is required (min 3 chars).
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-medium text-secondary small">Discount Type <span class="text-danger">*</span></label>
+              <select class="form-select form-select-lg bg-light border-0" formControlName="discountType">
+                <option value="percentage">Percentage (%)</option>
+                <option value="fixed">Fixed Amount (₹)</option>
+                <option value="shipping">Free Shipping</option>
+              </select>
+            </div>
+
+            <div class="col-md-12">
+              <label class="form-label fw-medium text-secondary small">Description <span class="text-danger">*</span></label>
+              <textarea class="form-control bg-light border-0" rows="2" 
+                        formControlName="description" placeholder="e.g. 50% off on all summer collections"></textarea>
+            </div>
+
+            <div class="col-md-6" *ngIf="couponForm.get('discountType')?.value !== 'shipping'">
+              <label class="form-label fw-medium text-secondary small">Discount Value <span class="text-danger">*</span></label>
+              <input type="number" class="form-control form-control-lg bg-light border-0" 
+                     formControlName="discountValue" min="0">
+            </div>
+
+            <div class="col-md-6" *ngIf="couponForm.get('discountType')?.value === 'percentage'">
+              <label class="form-label fw-medium text-secondary small">Max Discount Amount (₹)</label>
+              <input type="number" class="form-control form-control-lg bg-light border-0" 
+                     formControlName="maxDiscountAmount" min="0" placeholder="Optional cap">
+            </div>
+          </div>
+
+          <hr class="text-muted opacity-25 my-5">
+
+          <h5 class="fw-bold mb-4">Usage Restrictions</h5>
+          
+          <div class="row g-4 mb-4">
+            <div class="col-md-6">
+              <label class="form-label fw-medium text-secondary small">Minimum Order Value (₹)</label>
+              <input type="number" class="form-control form-control-lg bg-light border-0" 
+                     formControlName="minOrderValue" min="0" placeholder="0 = no minimum">
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label fw-medium text-secondary small">Total Usage Limit</label>
+              <input type="number" class="form-control form-control-lg bg-light border-0" 
+                     formControlName="usageLimit" min="1" placeholder="Leave empty for unlimited">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-medium text-secondary small">Limit Per User <span class="text-danger">*</span></label>
+              <input type="number" class="form-control form-control-lg bg-light border-0" 
+                     formControlName="userUsageLimit" min="1">
+            </div>
+          </div>
+
+          <hr class="text-muted opacity-25 my-5">
+
+          <h5 class="fw-bold mb-4">Validity Period</h5>
+
+          <div class="row g-4 mb-4">
+            <div class="col-md-6">
+              <label class="form-label fw-medium text-secondary small">Valid From <span class="text-danger">*</span></label>
+              <input type="date" class="form-control form-control-lg bg-light border-0" 
+                     formControlName="validFrom">
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label fw-medium text-secondary small">Valid Until <span class="text-danger">*</span></label>
+              <input type="date" class="form-control form-control-lg bg-light border-0" 
+                     formControlName="validUntil">
+            </div>
+          </div>
+
+          <div class="form-check form-switch mt-4 mb-5">
+            <input class="form-check-input" type="checkbox" role="switch" id="isActive" formControlName="isActive">
+            <label class="form-check-label fw-medium ms-2" for="isActive">Coupon is Active</label>
+          </div>
+
+          <div class="d-flex justify-content-end gap-3 mt-4">
+            <a routerLink="/admin/coupons" class="btn btn-light px-4 py-2 fw-semibold">Cancel</a>
+            <button type="submit" class="btn btn-dark px-4 py-2 fw-semibold" [disabled]="loading()">
+              <span *ngIf="loading()" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              {{ isEditMode ? 'Update Coupon' : 'Create Coupon' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-lg-4">
+    <div class="card border-0 shadow-sm rounded-4 bg-light">
+      <div class="card-body p-4">
+        <h6 class="fw-bold mb-3"><i class="bi bi-info-circle me-2"></i>Coupon Tips</h6>
+        <ul class="text-secondary small ps-3 mb-0" style="line-height: 1.8;">
+          <li>Use short, memorable codes without spaces (e.g., WELCOME10).</li>
+          <li>For percentage discounts, it's highly recommended to set a <strong>Max Discount Amount</strong>.</li>
+          <li><strong>Total Usage Limit</strong> is the total number of times the coupon can be used across all users.</li>
+          <li><strong>Limit Per User</strong> restricts how many times a single customer can apply this code.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
