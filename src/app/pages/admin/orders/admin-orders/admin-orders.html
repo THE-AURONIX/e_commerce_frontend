@@ -1,0 +1,106 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="fw-bold m-0 letter-spacing-tight">Orders Management</h2>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-md-4">
+    <div class="card border-0 shadow-sm rounded-0 p-4 bg-dark text-white h-100">
+      <h6 class="text-uppercase fs-8 letter-spacing-wide text-white-50 mb-2">Total Revenue</h6>
+      <h3 class="fw-bold m-0">{{ stats()?.totalRevenue || 0 | currency:'INR' }}</h3>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card border-0 shadow-sm rounded-0 p-4 bg-light h-100 border-start border-4 border-dark">
+      <h6 class="text-uppercase fs-8 letter-spacing-wide text-muted mb-2">Total Orders</h6>
+      <h3 class="fw-bold m-0">{{ stats()?.totalOrders || 0 }}</h3>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card border-0 shadow-sm rounded-0 p-4 bg-light h-100">
+      <h6 class="text-uppercase fs-8 letter-spacing-wide text-muted mb-2">Filter Status</h6>
+      <select class="form-select border-0 bg-transparent fw-bold" [ngModel]="statusFilter()" (ngModelChange)="onFilterChange($event)">
+        <option value="">All Orders</option>
+        <option value="pending">Pending</option>
+        <option value="confirmed">Confirmed</option>
+        <option value="shipped">Shipped</option>
+        <option value="delivered">Delivered</option>
+        <option value="return_requested">Return Requested</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-0">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th class="py-3 text-uppercase fs-8 letter-spacing-wide text-muted">Order ID</th>
+          <th class="py-3 text-uppercase fs-8 letter-spacing-wide text-muted">Customer</th>
+          <th class="py-3 text-uppercase fs-8 letter-spacing-wide text-muted">Date</th>
+          <th class="py-3 text-uppercase fs-8 letter-spacing-wide text-muted">Total</th>
+          <th class="py-3 text-uppercase fs-8 letter-spacing-wide text-muted">Status</th>
+          <th class="py-3 text-uppercase fs-8 letter-spacing-wide text-muted">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="isLoading()">
+          <td colspan="6" class="text-center py-5">
+            <div class="spinner-border text-dark" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="!isLoading() && orders().length === 0">
+          <td colspan="6" class="text-center py-5 text-muted">No orders found.</td>
+        </tr>
+        <tr *ngFor="let order of orders()">
+          <td class="fw-semibold">#{{ order._id.substring(order._id.length - 8) }}</td>
+          <td>
+            <div class="fw-bold">{{ order.shipping?.address?.firstName }} {{ order.shipping?.address?.lastName }}</div>
+            <div class="text-muted fs-8">{{ order.user?.email }}</div>
+          </td>
+          <td class="text-muted fs-8">{{ order.createdAt | date:'mediumDate' }}</td>
+          <td class="fw-bold">{{ order.totalAmount | currency:'INR' }}</td>
+          <td>
+            <span class="badge rounded-pill px-2 py-1 text-uppercase fs-9 letter-spacing-wide"
+                  [ngClass]="{
+                    'bg-warning text-dark': order.orderStatus === 'pending' || order.orderStatus === 'processing',
+                    'bg-info text-dark': order.orderStatus === 'confirmed',
+                    'bg-primary': order.orderStatus === 'shipped',
+                    'bg-success': order.orderStatus === 'delivered' || order.orderStatus === 'returned',
+                    'bg-danger': order.orderStatus === 'cancelled' || order.orderStatus === 'return_requested'
+                  }">
+              {{ order.orderStatus }}
+            </span>
+          </td>
+          <td>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-dark rounded-0 dropdown-toggle text-uppercase fs-8 fw-semibold" type="button" data-bs-toggle="dropdown">
+                Update
+              </button>
+              <ul class="dropdown-menu rounded-0 shadow-sm border-0 fs-8">
+                <li><a class="dropdown-item py-2 cursor-pointer" (click)="updateStatus(order._id, 'confirmed')">Mark Confirmed</a></li>
+                <li><a class="dropdown-item py-2 cursor-pointer" (click)="updateStatus(order._id, 'processing')">Mark Processing</a></li>
+                <li><a class="dropdown-item py-2 cursor-pointer" (click)="updateStatus(order._id, 'shipped')">Mark Shipped</a></li>
+                <li><a class="dropdown-item py-2 cursor-pointer" (click)="updateStatus(order._id, 'delivered')">Mark Delivered</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li *ngIf="order.orderStatus === 'return_requested'">
+                   <a class="dropdown-item py-2 text-danger cursor-pointer fw-bold" (click)="approveReturn(order._id)">Approve Return & Refund</a>
+                </li>
+                <li><a class="dropdown-item py-2 text-danger cursor-pointer" (click)="updateStatus(order._id, 'cancelled')">Cancel Order</a></li>
+              </ul>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <div class="p-3 border-top d-flex justify-content-between align-items-center bg-light" *ngIf="totalPages() > 1">
+    <button class="btn btn-sm btn-outline-dark rounded-0" [disabled]="currentPage() === 1" (click)="loadOrders(currentPage() - 1)">Previous</button>
+    <span class="fs-8 fw-semibold text-uppercase letter-spacing-wide text-muted">Page {{ currentPage() }} of {{ totalPages() }}</span>
+    <button class="btn btn-sm btn-outline-dark rounded-0" [disabled]="currentPage() === totalPages()" (click)="loadOrders(currentPage() + 1)">Next</button>
+  </div>
+</div>

@@ -1,0 +1,99 @@
+<div>
+  <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+    <div>
+      <h4 class="fw-bolder letter-spacing-tight mb-1">Saved Addresses</h4>
+      <p class="text-muted fs-7 mb-0">Manage your shipping addresses.</p>
+    </div>
+    <button class="btn btn-dark rounded-0 px-4 fs-7 fw-bold text-uppercase" (click)="toggleAdd()" *ngIf="!isAdding()">
+      <i class="bi bi-plus me-2"></i>Add New
+    </button>
+  </div>
+
+  <div *ngIf="isAdding()" class="card border-0 rounded-0 shadow-sm bg-light mb-4">
+    <div class="card-body p-4">
+      <h6 class="fw-bold mb-4">Add New Address</h6>
+      <form [formGroup]="addressForm" (ngSubmit)="onSubmit()">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label fs-8 fw-bold text-uppercase">First Name</label>
+            <input type="text" class="form-control rounded-0 border-dark" formControlName="firstName">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fs-8 fw-bold text-uppercase">Last Name</label>
+            <input type="text" class="form-control rounded-0 border-dark" formControlName="lastName">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fs-8 fw-bold text-uppercase">Phone</label>
+            <input type="text" class="form-control rounded-0 border-dark" formControlName="phone">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fs-8 fw-bold text-uppercase">Address Type</label>
+            <select class="form-select rounded-0 border-dark" formControlName="type">
+              <option value="home">Home</option>
+              <option value="work">Work</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <label class="form-label fs-8 fw-bold text-uppercase">Address Line 1</label>
+            <input type="text" class="form-control rounded-0 border-dark" formControlName="addressLine1">
+          </div>
+          <div class="col-12">
+            <label class="form-label fs-8 fw-bold text-uppercase">Address Line 2 (Optional)</label>
+            <input type="text" class="form-control rounded-0 border-dark" formControlName="addressLine2">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fs-8 fw-bold text-uppercase">City</label>
+            <input type="text" class="form-control rounded-0 border-dark" formControlName="city">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fs-8 fw-bold text-uppercase">State</label>
+            <input type="text" class="form-control rounded-0 border-dark" formControlName="state">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fs-8 fw-bold text-uppercase">Pincode</label>
+            <input type="text" class="form-control rounded-0 border-dark" formControlName="pincode">
+          </div>
+          <div class="col-12">
+            <div class="form-check mt-2">
+              <input class="form-check-input rounded-0 border-dark" type="checkbox" formControlName="isDefault" id="isDefault">
+              <label class="form-check-label fs-7" for="isDefault">Set as default address</label>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex justify-content-end gap-2 mt-4">
+          <button type="button" class="btn btn-outline-dark rounded-0 px-4 fw-bold text-uppercase fs-8" (click)="toggleAdd()">Cancel</button>
+          <button type="submit" class="btn btn-dark rounded-0 px-4 fw-bold text-uppercase fs-8" [disabled]="addressForm.invalid || isLoading()">Save Address</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="row g-4" *ngIf="addresses().length > 0; else noAddresses">
+    <div class="col-md-6" *ngFor="let addr of addresses()">
+      <div class="card border border-dark rounded-0 h-100" [ngClass]="{'border-2': addr.isDefault}">
+        <div class="card-body p-4 position-relative">
+          <span class="badge bg-dark rounded-0 position-absolute top-0 end-0 m-3" *ngIf="addr.isDefault">DEFAULT</span>
+          <h6 class="fw-bold mb-1 text-uppercase">{{ addr.type }}</h6>
+          <p class="fw-semibold mb-2">{{ addr.firstName }} {{ addr.lastName }}</p>
+          <p class="text-muted fs-7 mb-1">{{ addr.addressLine1 }}<span *ngIf="addr.addressLine2">, {{ addr.addressLine2 }}</span></p>
+          <p class="text-muted fs-7 mb-1">{{ addr.city }}, {{ addr.state }} {{ addr.pincode }}</p>
+          <p class="text-muted fs-7 mb-3">Phone: {{ addr.phone }}</p>
+
+          <div class="d-flex gap-3 pt-3 border-top">
+            <a href="javascript:void(0)" class="text-dark fs-8 fw-bold text-uppercase text-decoration-none" (click)="deleteAddress(addr._id)">Remove</a>
+            <a href="javascript:void(0)" class="text-dark fs-8 fw-bold text-uppercase text-decoration-none" *ngIf="!addr.isDefault" (click)="makeDefault(addr._id, addr)">Make Default</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noAddresses>
+    <div class="text-center py-5" *ngIf="!isAdding()">
+      <i class="bi bi-geo fs-1 text-muted mb-3 d-block"></i>
+      <h6 class="fw-bold mb-2">No addresses saved yet.</h6>
+      <p class="text-muted fs-7">Add an address to make your checkout experience faster.</p>
+    </div>
+  </ng-template>
+</div>

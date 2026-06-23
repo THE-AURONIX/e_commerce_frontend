@@ -1,0 +1,58 @@
+<div class="container-fluid px-4 py-5 mt-5 bg-light min-vh-100">
+  <div class="row pt-4 max-w-6xl mx-auto">
+
+    <!-- Sidebar Navigation -->
+    <div class="col-lg-3 mb-5 mb-lg-0">
+      <div class="card border-0 rounded-0 shadow-sm mb-4">
+        <div class="card-body p-4 text-center">
+          <div
+            class="avatar bg-dark text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
+            style="width: 80px; height: 80px;">
+            <span class="fs-3 fw-bold">{{ user()?.firstName?.charAt(0) }}{{ user()?.lastName?.charAt(0) }}</span>
+          </div>
+          <h5 class="fw-bolder mb-1">{{ user()?.firstName }} {{ user()?.lastName }}</h5>
+          <p class="text-muted fs-7 mb-0">{{ user()?.email }}</p>
+        </div>
+      </div>
+
+      <div class="card border-0 rounded-0 shadow-sm">
+        <div class="list-group list-group-flush rounded-0">
+          <a routerLink="/user/profile/info" routerLinkActive="active"
+            class="list-group-item list-group-item-action py-3 px-4 border-0 fs-7 fw-medium d-flex align-items-center">
+            <i class="bi bi-person me-3 fs-5 text-muted"></i> Personal Information
+          </a>
+          <a routerLink="/user/profile/security" routerLinkActive="active"
+            class="list-group-item list-group-item-action py-3 px-4 border-0 fs-7 fw-medium d-flex align-items-center">
+            <i class="bi bi-shield-lock me-3 fs-5 text-muted"></i> Security Settings
+          </a>
+          <a routerLink="/user/profile/addresses" routerLinkActive="active"
+            class="list-group-item list-group-item-action py-3 px-4 border-0 fs-7 fw-medium d-flex align-items-center">
+            <i class="bi bi-geo-alt me-3 fs-5 text-muted"></i> Saved Addresses
+          </a>
+          <a routerLink="/user/profile/wishlist" routerLinkActive="active"
+            class="list-group-item list-group-item-action py-3 px-4 border-0 fs-7 fw-medium d-flex align-items-center">
+            <i class="bi bi-heart me-3 fs-5 text-muted"></i> My Wishlist
+          </a>
+          <a routerLink="/user/profile/orders"
+            class="list-group-item list-group-item-action py-3 px-4 border-0 fs-7 fw-medium d-flex align-items-center">
+            <i class="bi bi-box-seam me-3 fs-5 text-muted"></i> Order History
+          </a>
+          <button (click)="logout()"
+            class="list-group-item list-group-item-action py-3 px-4 border-0 fs-7 fw-medium text-danger d-flex align-items-center">
+            <i class="bi bi-box-arrow-right me-3 fs-5"></i> Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="col-lg-9">
+      <div class="card border-0 rounded-0 shadow-sm min-vh-50">
+        <div class="card-body p-4 p-md-5">
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

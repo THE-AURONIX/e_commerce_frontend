@@ -1,0 +1,61 @@
+<!-- Footer -->
+<footer class="bg-dark text-white pt-5 pb-4">
+    <div class="container pt-4 pb-lg-0 pb-5 mb-5 mb-lg-0"> <!-- Extra bottom padding for mobile nav -->
+        <div class="row g-5 mb-5">
+            <div class="col-lg-4 col-md-12 pe-lg-5">
+                <h3 class="fw-bolder letter-spacing-tight mb-4">STUDIO.</h3>
+                <p class="text-white-50 fs-7 mb-4">A premium e-commerce destination for minimalist design, sustainable fashion, and timeless aesthetics.</p>
+                <form class="d-flex w-100 border-bottom border-secondary pb-2">
+                    <input type="email" class="form-control bg-transparent border-0 shadow-none text-white px-0" placeholder="Sign up for our newsletter" aria-label="Email">
+                    <button class="btn btn-link text-white text-decoration-none fw-bold p-0 text-uppercase fs-7" type="submit">Subscribe</button>
+                </form>
+            </div>
+            
+            <div class="col-lg-2 col-md-4 col-6">
+                <h6 class="fw-bold text-uppercase letter-spacing-wide mb-4">Shop</h6>
+                <ul class="list-unstyled fs-7">
+                    <li class="mb-3"><a routerLink="/products" [queryParams]="{category: 'women'}" class="text-white-50 text-decoration-none footer-link cursor-pointer">Women</a></li>
+                    <li class="mb-3"><a routerLink="/products" [queryParams]="{category: 'men'}" class="text-white-50 text-decoration-none footer-link cursor-pointer">Men</a></li>
+                    <li class="mb-3"><a routerLink="/products" [queryParams]="{category: 'accessories'}" class="text-white-50 text-decoration-none footer-link cursor-pointer">Accessories</a></li>
+                    <li class="mb-3"><a routerLink="/products" class="text-white-50 text-decoration-none footer-link cursor-pointer">All Products</a></li>
+                </ul>
+            </div>
+            
+            <div class="col-lg-2 col-md-4 col-6">
+                <h6 class="fw-bold text-uppercase letter-spacing-wide mb-4">Help</h6>
+                <ul class="list-unstyled fs-7">
+                    <li class="mb-3"><a routerLink="/" class="text-white-50 text-decoration-none footer-link cursor-pointer">Customer Service</a></li>
+                    <li class="mb-3"><a routerLink="/user/profile" class="text-white-50 text-decoration-none footer-link cursor-pointer">Track Order</a></li>
+                    <li class="mb-3"><a routerLink="/user/profile" class="text-white-50 text-decoration-none footer-link cursor-pointer">Returns & Exchanges</a></li>
+                    <li class="mb-3"><a routerLink="/" class="text-white-50 text-decoration-none footer-link cursor-pointer">Shipping Info</a></li>
+                </ul>
+            </div>
+            
+            <div class="col-lg-4 col-md-4">
+                <h6 class="fw-bold text-uppercase letter-spacing-wide mb-4">Contact</h6>
+                <ul class="list-unstyled fs-7 text-white-50">
+                    <li class="mb-3"><i class="bi bi-geo-alt me-2"></i> 123 Minimalist St, Design District, NY 10001</li>
+                    <li class="mb-3"><i class="bi bi-envelope me-2"></i> hello@studio.com</li>
+                    <li class="mb-4"><i class="bi bi-telephone me-2"></i> +1 (555) 123-4567</li>
+                </ul>
+                <div class="d-flex gap-3">
+                    <a href="#" class="text-white fs-5 icon-hover"><i class="bi bi-instagram"></i></a>
+                    <a href="#" class="text-white fs-5 icon-hover"><i class="bi bi-twitter-x"></i></a>
+                    <a href="#" class="text-white fs-5 icon-hover"><i class="bi bi-pinterest"></i></a>
+                    <a href="#" class="text-white fs-5 icon-hover"><i class="bi bi-tiktok"></i></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row align-items-center pt-4 border-top border-secondary border-opacity-50">
+            <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                <p class="text-white-50 fs-8 mb-0">&copy; 2026 STUDIO. All rights reserved.</p>
+            </div>
+            <div class="col-md-6 text-center text-md-end">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/200px-Visa_Inc._logo.svg.png" height="20" class="ms-3 opacity-75 grayscale" alt="Visa">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/200px-Mastercard-logo.svg.png" height="20" class="ms-3 opacity-75 grayscale" alt="Mastercard">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/PayPal.svg/200px-PayPal.svg.png" height="20" class="ms-3 opacity-75 grayscale" alt="PayPal">
+            </div>
+        </div>
+    </div>
+</footer>

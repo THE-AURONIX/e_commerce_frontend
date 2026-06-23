@@ -1,0 +1,14 @@
+.list-group-item.active {
+  background-color: transparent;
+  color: #000;
+  border-left: 3px solid #000 !important;
+  font-weight: 700 !important;
+}
+
+.list-group-item.active i {
+  color: #000 !important;
+}
+
+.max-w-6xl {
+  max-width: 1200px;
+}

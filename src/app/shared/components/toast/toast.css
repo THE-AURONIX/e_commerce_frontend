@@ -1,0 +1,33 @@
+.toast-container {
+  z-index: 9999 !important;
+  margin-top: 10px; /* Space from top */
+}
+
+.toast {
+  border-radius: 8px;
+  min-width: 250px;
+}
+
+.pointer-events-auto {
+  pointer-events: auto;
+}
+
+.pointer-events-none {
+  pointer-events: none;
+}
+
+/* Slide in animation */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-toast {
+  animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

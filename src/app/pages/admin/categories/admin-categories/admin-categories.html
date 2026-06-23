@@ -1,0 +1,69 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h3 class="fw-bold m-0 letter-spacing-tight">Categories</h3>
+  <button class="btn btn-primary rounded-0 px-4" routerLink="/admin/categories/add">
+    <i class="bi bi-plus-lg me-2"></i> Add Category
+  </button>
+</div>
+
+<div class="card border-0 shadow-sm rounded-0">
+  <div class="card-body p-0">
+    <!-- Loading State -->
+    <div *ngIf="loading()" class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="text-muted mt-2">Loading categories...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading() && categories().length === 0" class="text-center py-5">
+      <i class="bi bi-tags display-4 text-muted mb-3 d-block"></i>
+      <h5 class="fw-bold">No categories found</h5>
+      <p class="text-muted">Get started by creating your first category.</p>
+    </div>
+
+    <!-- Table -->
+    <div class="table-responsive" *ngIf="!loading() && categories().length > 0">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light text-uppercase fs-8 letter-spacing-wide">
+          <tr>
+            <th class="py-3 px-4 border-0">Name</th>
+            <th class="py-3 border-0">Parent</th>
+            <th class="py-3 border-0">Sort Order</th>
+            <th class="py-3 border-0">Status</th>
+            <th class="py-3 border-0 text-end px-4">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let category of categories()">
+            <td class="px-4 py-3">
+              <h6 class="m-0 fw-semibold">{{ category.name }}</h6>
+              <small class="text-muted">/{{ category.slug }}</small>
+            </td>
+            <td class="px-4 py-3 text-secondary">
+              {{ getParentName(category.parentCategory) }}
+            </td>
+            <td class="px-4 py-3">
+              <span class="badge bg-light text-dark border">{{ category.sortOrder || 0 }}</span>
+            </td>
+            <td class="px-4 py-3">
+              <span class="badge" [ngClass]="category.isActive ? 'bg-success-subtle text-success border border-success-subtle' : 'bg-danger-subtle text-danger border border-danger-subtle'">
+                {{ category.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+            <td class="px-4 py-3 text-end">
+              <div class="btn-group shadow-sm">
+                <button class="btn btn-light btn-sm border-end" [routerLink]="['/admin/categories/edit', category._id]" title="Edit">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-light btn-sm text-danger" (click)="deleteCategory(category._id)" title="Delete">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

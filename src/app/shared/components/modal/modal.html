@@ -1,0 +1,26 @@
+<div class="modal-overlay" *ngIf="modalService.modalState().isOpen" (click)="onCancel()">
+  <div class="modal-dialog-custom" (click)="$event.stopPropagation()">
+    <div class="modal-header-custom">
+      <h3 class="fw-bold m-0">{{ modalService.modalState().title }}</h3>
+    </div>
+    
+    <div class="modal-body-custom">
+      <p class="text-secondary mb-0">{{ modalService.modalState().message }}</p>
+      
+      <div *ngIf="modalService.modalState().type === 'prompt'" class="mt-4">
+        <input 
+          type="text" 
+          class="form-control form-control-lg bg-light border-0" 
+          [(ngModel)]="promptValue" 
+          [placeholder]="modalService.modalState().inputPlaceholder || ''"
+          (keyup.enter)="onConfirm()"
+          autofocus>
+      </div>
+    </div>
+    
+    <div class="modal-footer-custom mt-4 d-flex justify-content-end gap-2">
+      <button class="btn btn-light px-4 fw-semibold" (click)="onCancel()">Cancel</button>
+      <button class="btn btn-dark px-4 fw-semibold shadow-sm" (click)="onConfirm()">Confirm</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,7 @@
+.offcanvas {
+  width: 450px;
+  max-width: 100vw;
+  border-left: none;
+  box-shadow: -10px 0 40px rgba(0,0,0,0.08);
+  transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}

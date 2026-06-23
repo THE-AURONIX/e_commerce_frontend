@@ -1,0 +1,235 @@
+/* 
+    Premium Minimal E-commerce Theme
+    Typography: Inter 
+    Aesthetics: Monochrome, Clean, High-End Fashion Retail
+*/
+
+html {
+    scroll-behavior: initial !important;
+}
+
+:root {
+    --primary: #000000;
+    --secondary: #ffffff;
+    --gray-light: #f8f9fa;
+    --gray-medium: #e9ecef;
+    --gray-dark: #212529;
+    --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    color: var(--primary);
+    background-color: var(--secondary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Utilities */
+.fs-7 { font-size: 0.85rem; }
+.fs-8 { font-size: 0.75rem; }
+.letter-spacing-tight { letter-spacing: -0.03em; }
+.letter-spacing-wide { letter-spacing: 0.05em; }
+.transition-all { transition: var(--transition); }
+.grayscale { filter: grayscale(100%); }
+.icon-hover:hover { opacity: 0.7; }
+
+/* Navbar */
+.announcement-bar {
+    font-size: 0.8rem;
+    letter-spacing: 0.02em;
+}
+
+.desktop-nav {
+    z-index: 1030;
+}
+
+.desktop-nav.scrolled {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+}
+
+.nav-link {
+    color: var(--primary);
+    transition: var(--transition);
+}
+
+.nav-link:hover {
+    color: var(--gray-dark);
+    opacity: 0.7;
+}
+
+#navLinks .nav-link {
+    position: relative;
+    padding-bottom: 0.5rem;
+}
+
+#navLinks .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: var(--primary);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#navLinks .nav-link:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+/* Hero Banner */
+.hero-banner {
+    height: 85vh;
+}
+
+.btn-hover-dark:hover {
+    background: var(--gray-medium) !important;
+    color: var(--primary) !important;
+}
+
+.btn-hover-fill:hover {
+    background: var(--secondary) !important;
+    color: var(--primary) !important;
+}
+
+/* Categories */
+.category-img-wrapper {
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.category-link:hover .category-img-wrapper {
+    transform: scale(1.05);
+}
+
+/* Product Cards */
+.img-container {
+    aspect-ratio: 3/4;
+    cursor: pointer;
+}
+
+.product-img, .product-img-hover {
+    transition: opacity 0.5s ease, transform 1.5s ease;
+}
+
+.product-img-hover {
+    opacity: 0;
+}
+
+.product-card:hover .product-img {
+    opacity: 0;
+}
+
+.product-card:hover .product-img-hover {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+.add-to-cart {
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.product-card:hover .add-to-cart {
+    transform: translateY(0);
+}
+
+.wishlist-btn {
+    opacity: 0;
+    transform: translateX(10px);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.product-card:hover .wishlist-btn {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.view-all-link {
+    text-underline-offset: 4px;
+}
+
+.view-all-link:hover {
+    color: #666 !important;
+}
+
+/* Promo Banner Split */
+.banner-split {
+    height: 60vh;
+}
+
+.banner-split img {
+    transition: transform 1.5s ease;
+}
+
+.banner-split:hover img {
+    transform: scale(1.05);
+}
+
+/* Footer Links */
+.footer-link {
+    transition: var(--transition);
+}
+
+.footer-link:hover {
+    color: var(--secondary) !important;
+    padding-left: 5px;
+}
+
+/* -------------------------------------
+   MOBILE SPECIFICS
+-------------------------------------- */
+
+/* Offcanvas Custom */
+.offcanvas-nav a:hover {
+    padding-left: 5px;
+}
+
+/* Bottom Nav Mobile */
+.mobile-bottom-nav {
+    z-index: 1040;
+}
+
+.mobile-bottom-nav .nav-item {
+    transition: var(--transition);
+    flex: 1;
+}
+
+.mobile-bottom-nav .nav-item.active-nav {
+    color: var(--primary) !important;
+}
+
+.mobile-bottom-nav .nav-item:active {
+    transform: scale(0.9);
+}
+
+@media (max-width: 991px) {
+    .hero-banner {
+        height: 70vh;
+    }
+    
+    .banner-split {
+        height: 40vh;
+    }
+    
+    /* Ensure Add to Cart is always visible on mobile */
+    .add-to-cart {
+        transform: translateY(0);
+        position: relative !important;
+        background: transparent !important;
+        color: var(--primary) !important;
+        border: 1px solid var(--gray-medium);
+        margin-top: 10px;
+        padding: 0.5rem !important;
+    }
+    
+    .wishlist-btn {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

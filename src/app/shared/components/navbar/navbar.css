@@ -1,0 +1,80 @@
+/* Navbar General Styles */
+.desktop-nav {
+    transition: all 0.3s ease;
+    z-index: 1040;
+}
+
+.desktop-nav.scrolled {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.letter-spacing-tight {
+    letter-spacing: -1px;
+}
+
+.letter-spacing-wide {
+    letter-spacing: 1px;
+}
+
+/* Mega Menu Styles */
+.mega-menu {
+    top: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    z-index: 1050;
+    min-height: 250px;
+}
+
+.nav-item.position-static:hover .mega-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Search Bar Styles */
+.search-container {
+    transition: border-color 0.3s ease;
+}
+
+.search-container:focus-within {
+    border-color: #000 !important;
+    box-shadow: 0 0 0 0.1rem rgba(0,0,0,0.1);
+}
+
+.search-container input {
+    background-color: transparent;
+}
+
+.search-container input:focus {
+    box-shadow: none;
+    background-color: transparent;
+}
+
+/* Hover Effects */
+.hover-danger:hover {
+    color: #dc3545 !important;
+    text-decoration: underline !important;
+}
+
+.hover-dark:hover {
+    color: #000 !important;
+    text-decoration: underline !important;
+}
+
+/* Dropdown Animation */
+.dropdown-menu {
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

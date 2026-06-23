@@ -1,0 +1,50 @@
+<div>
+  <h4 class="fw-bolder mb-4 letter-spacing-tight">Personal Information</h4>
+  <p class="text-muted fs-7 mb-4 pb-3 border-bottom">Manage your personal details and how we can contact you.</p>
+
+  <div *ngIf="errorMessage()" class="alert alert-danger rounded-0 border-0 fs-8 py-2 mb-4">
+    <i class="bi bi-exclamation-triangle me-2"></i>{{ errorMessage() }}
+  </div>
+
+  <div *ngIf="successMessage()" class="alert alert-success rounded-0 border-0 fs-8 py-2 mb-4">
+    <i class="bi bi-check-circle me-2"></i>{{ successMessage() }}
+  </div>
+
+  <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+    <div class="row g-4 mb-4">
+      <div class="col-md-6">
+        <label class="form-label fw-bold text-uppercase fs-8 letter-spacing-wide">First Name</label>
+        <input type="text" class="form-control form-control-lg rounded-0 border-dark px-3 py-2 fs-7" formControlName="firstName">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-bold text-uppercase fs-8 letter-spacing-wide">Last Name</label>
+        <input type="text" class="form-control form-control-lg rounded-0 border-dark px-3 py-2 fs-7" formControlName="lastName">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-bold text-uppercase fs-8 letter-spacing-wide">Phone Number</label>
+        <input type="tel" class="form-control form-control-lg rounded-0 border-dark px-3 py-2 fs-7" formControlName="phone" placeholder="10 digit Indian mobile">
+        <div class="text-danger fs-8 mt-1" *ngIf="profileForm.get('phone')?.invalid && profileForm.get('phone')?.touched">
+          Please enter a valid 10-digit Indian mobile number.
+        </div>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-bold text-uppercase fs-8 letter-spacing-wide">Date of Birth</label>
+        <input type="date" class="form-control form-control-lg rounded-0 border-dark px-3 py-2 fs-7" formControlName="dateOfBirth">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-bold text-uppercase fs-8 letter-spacing-wide">Gender</label>
+        <select class="form-select form-control-lg rounded-0 border-dark px-3 py-2 fs-7" formControlName="gender">
+          <option value="">Select Gender</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-dark rounded-0 px-5 py-3 text-uppercase fw-bold fs-7" [disabled]="profileForm.invalid || isLoading()">
+      <span *ngIf="isLoading()" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+      Save Changes
+    </button>
+  </form>
+</div>

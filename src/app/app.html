@@ -1,0 +1,17 @@
+@if (!isAdminRoute()) {
+  <app-navbar></app-navbar>
+}
+
+<main>
+    <router-outlet></router-outlet>
+</main>
+
+<!-- Global Components -->
+<app-toast></app-toast>
+<app-modal></app-modal>
+
+@if (!isAdminRoute()) {
+  <app-cart-offcanvas></app-cart-offcanvas>
+  <app-footer></app-footer>
+  <app-review-popup></app-review-popup>
+}

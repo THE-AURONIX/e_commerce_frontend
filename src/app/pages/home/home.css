@@ -1,0 +1,102 @@
+/* Hero Section */
+.hero-parallax {
+  height: 100vh;
+  min-height: 600px;
+}
+.hero-bg {
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed; /* Simple parallax effect */
+  transform: translateZ(0); /* Hardware acceleration */
+}
+
+/* Hover Buttons */
+.btn-hover-dark:hover {
+  background-color: #000 !important;
+  color: #fff !important;
+  border-color: #000 !important;
+}
+.btn-hover-fill:hover {
+  background-color: #fff !important;
+  color: #000 !important;
+}
+
+/* Bento Grid */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(2, 300px);
+  gap: 1rem;
+}
+.bento-item {
+  border-radius: 0px; /* Keeping the sharp look */
+}
+.bento-large {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+.bento-tall {
+  grid-column: span 1;
+  grid-row: span 2;
+}
+.bento-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 2rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+}
+.bento-img {
+  transition: transform 0.5s ease;
+}
+.bento-item:hover .bento-img {
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .bento-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+  .bento-large, .bento-tall {
+    grid-column: span 1;
+    grid-row: auto;
+    height: 300px;
+  }
+  .bento-item {
+    height: 300px;
+  }
+}
+
+/* Spotlight Hover Effect */
+.hover-scale-slow {
+  transition: transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.hover-scale-slow:hover {
+  transform: scale(1.03);
+}
+
+/* Horizontal Scrolling Carousel */
+.carousel-container {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+  scroll-behavior: smooth;
+}
+.carousel-container::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+.carousel-item-wrapper {
+  flex-shrink: 0;
+  height: 100%;
+}
+
+/* Group Hovers */
+.transition-transform {
+  transition: transform 0.3s ease;
+}
+.group:hover .group-hover-scale {
+  transform: scale(1.1);
+}

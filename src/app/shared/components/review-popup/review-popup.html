@@ -1,0 +1,57 @@
+<div class="review-overlay" *ngIf="showPopup() && currentProduct()">
+  <div class="review-modal d-flex flex-column">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+      <h5 class="m-0 fw-bold letter-spacing-tight">How was your item?</h5>
+      <button type="button" class="btn-close" (click)="dismiss()" aria-label="Close"></button>
+    </div>
+
+    <!-- Body -->
+    <div class="p-4 flex-grow-1 overflow-auto">
+      <div class="d-flex gap-3 mb-4">
+        <img *ngIf="currentProduct().product.images?.length > 0" [src]="currentProduct().product.images[0].url || currentProduct().product.images[0]" class="object-fit-cover border" style="width: 80px; height: 80px;" alt="Product">
+        <div>
+          <h6 class="fw-bold mb-1">{{ currentProduct().product.name }}</h6>
+          <p class="text-muted fs-8 mb-0">Delivered recently</p>
+        </div>
+      </div>
+
+      <form [formGroup]="reviewForm" (ngSubmit)="submitReview()">
+        <!-- Star Rating -->
+        <div class="text-center mb-4">
+          <p class="fw-semibold text-uppercase letter-spacing-wide fs-8 mb-2">Tap to Rate (Required)</p>
+          <div class="d-flex justify-content-center gap-2 star-rating text-muted">
+            <i class="bi bi-star-fill" 
+               *ngFor="let star of [1,2,3,4,5]" 
+               [class.text-warning]="hoverRating() >= star || reviewForm.get('rating')?.value >= star"
+               (mouseenter)="hoverRating.set(star)"
+               (mouseleave)="hoverRating.set(0)"
+               (click)="setRating(star)"></i>
+          </div>
+          <div class="text-danger fs-8 mt-1" *ngIf="reviewForm.get('rating')?.touched && reviewForm.get('rating')?.value === 0">
+            Please select a rating
+          </div>
+        </div>
+
+        <!-- Optional Text -->
+        <div class="mb-3">
+          <label class="form-label fs-8 fw-semibold text-uppercase letter-spacing-wide">Title <span class="text-muted fw-normal text-lowercase">(Optional)</span></label>
+          <input type="text" class="form-control rounded-0" formControlName="title" placeholder="Brief summary">
+        </div>
+        <div class="mb-4">
+          <label class="form-label fs-8 fw-semibold text-uppercase letter-spacing-wide">Comment <span class="text-muted fw-normal text-lowercase">(Optional)</span></label>
+          <textarea class="form-control rounded-0" formControlName="comment" rows="3" placeholder="Tell us more about your experience"></textarea>
+        </div>
+
+        <!-- Actions -->
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-light border rounded-0 flex-grow-1 fw-semibold text-uppercase fs-8 letter-spacing-wide" (click)="dismiss()">Skip</button>
+          <button type="submit" class="btn btn-dark rounded-0 flex-grow-1 fw-bold text-uppercase fs-8 letter-spacing-wide" [disabled]="reviewForm.invalid || isSubmitting() || reviewForm.get('rating')?.value === 0">
+            <span *ngIf="!isSubmitting()">Submit</span>
+            <span *ngIf="isSubmitting()">Sending...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

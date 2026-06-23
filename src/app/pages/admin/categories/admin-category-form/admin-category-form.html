@@ -1,0 +1,58 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h3 class="fw-bold m-0 letter-spacing-tight">{{ isEditMode ? 'Edit Category' : 'Add New Category' }}</h3>
+  <button class="btn btn-outline-secondary" routerLink="/admin/categories">
+    <i class="bi bi-arrow-left me-2"></i> Back to Categories
+  </button>
+</div>
+
+<div class="card border-0 shadow-sm rounded-0">
+  <div class="card-body p-4">
+    <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
+      <div class="row g-4">
+        <!-- Basic Info -->
+        <div class="col-md-8">
+          <h5 class="fw-bold mb-3 border-bottom pb-2">Category Information</h5>
+          
+          <div class="mb-3">
+            <label class="form-label fw-medium">Category Name <span class="text-danger">*</span></label>
+            <input type="text" class="form-control rounded-0" formControlName="name" placeholder="Enter category name">
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label fw-medium">Description</label>
+            <textarea class="form-control rounded-0" formControlName="description" rows="5" placeholder="Enter category description"></textarea>
+          </div>
+          
+        </div>
+        
+        <!-- Organization -->
+        <div class="col-md-4">
+          <h5 class="fw-bold mb-3 border-bottom pb-2">Organization</h5>
+          
+          <div class="mb-3">
+            <label class="form-label fw-medium">Parent Category</label>
+            <select class="form-select rounded-0" formControlName="parentCategory">
+              <option value="">None (Top Level Category)</option>
+              <option *ngFor="let cat of parentCategories" [value]="cat._id">{{ cat.name }}</option>
+            </select>
+            <div class="form-text">Select a parent to make this a sub-category.</div>
+          </div>
+          
+          <div class="mb-3 mt-4">
+            <label class="form-label fw-medium">Sort Order</label>
+            <input type="number" class="form-control rounded-0" formControlName="sortOrder" placeholder="0" min="0">
+            <div class="form-text">Lower numbers appear first in lists.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-5 d-flex justify-content-end border-top pt-4">
+        <button type="button" class="btn btn-light rounded-0 px-4 me-3" routerLink="/admin/categories">Cancel</button>
+        <button type="submit" class="btn btn-primary rounded-0 px-5" [disabled]="categoryForm.invalid || isSubmitting">
+          <span class="spinner-border spinner-border-sm me-2" role="status" *ngIf="isSubmitting"></span>
+          {{ isEditMode ? 'Update Category' : 'Create Category' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

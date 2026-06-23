@@ -1,0 +1,114 @@
+<div class="products-page">
+  <!-- Filter Bar (Compact & Responsive) -->
+  <div class="bg-white border-bottom py-2">
+    <div class="container-fluid px-4">
+      <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
+        
+        <!-- Results Count -->
+        <div class="text-muted fs-7 fw-medium mb-2 mb-md-0">
+          <span class="text-dark fw-bold">{{ totalCount() }}</span> Products Found
+          <span *ngIf="searchQuery()"> for "<span class="text-dark fw-bold">{{ searchQuery() }}</span>"</span>
+        </div>
+
+        <!-- Filters & Sort -->
+        <div class="d-flex flex-wrap align-items-center gap-2 w-100 w-md-auto justify-content-md-end">
+          
+          <!-- Category Dropdown -->
+          <div class="dropdown flex-grow-1 flex-md-grow-0">
+            <button class="btn btn-light rounded-pill px-3 fs-8 fw-bold text-uppercase letter-spacing-wide border d-flex align-items-center justify-content-between w-100 gap-2 dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              Category
+            </button>
+            <ul class="dropdown-menu border-0 shadow-sm rounded-3 mt-1" style="max-height: 300px; overflow-y: auto;">
+              <li><a class="dropdown-item fs-8 py-2 cursor-pointer" [class.fw-bold]="selectedCategory() === ''" (click)="applyFilters({category: null})">All Products</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li *ngFor="let cat of categories()">
+                <a class="dropdown-item fs-8 py-2 cursor-pointer" [class.fw-bold]="selectedCategory() === cat._id" (click)="applyFilters({category: cat._id})">{{ cat.name }}</a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Price Dropdown -->
+          <div class="dropdown flex-grow-1 flex-md-grow-0">
+            <button class="btn btn-light rounded-pill px-3 fs-8 fw-bold text-uppercase letter-spacing-wide border d-flex align-items-center justify-content-between w-100 gap-2 dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+              Price
+            </button>
+            <div class="dropdown-menu dropdown-menu-end p-3 border-0 shadow-sm rounded-3 mt-1" style="width: 280px;">
+              <h6 class="fw-bold mb-3 fs-8 text-uppercase letter-spacing-wide">Price Range (₹)</h6>
+              <div class="d-flex align-items-center gap-2 mb-3">
+                <input type="number" class="form-control form-control-sm rounded-2 bg-light border-0" placeholder="Min" [value]="minPrice() || ''" #minInput>
+                <span class="text-muted">-</span>
+                <input type="number" class="form-control form-control-sm rounded-2 bg-light border-0" placeholder="Max" [value]="maxPrice() || ''" #maxInput>
+              </div>
+              <button class="btn btn-dark btn-sm w-100 rounded-pill fw-bold letter-spacing-wide text-uppercase fs-8"
+                (click)="applyFilters({minPrice: minInput.value || null, maxPrice: maxInput.value || null})">
+                Apply Price
+              </button>
+            </div>
+          </div>
+
+          <!-- Sort Dropdown -->
+          <div class="dropdown flex-grow-1 flex-md-grow-0">
+            <button class="btn btn-light rounded-pill px-3 fs-8 fw-bold text-uppercase letter-spacing-wide border d-flex align-items-center justify-content-between w-100 gap-2 dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              Sort
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm rounded-3 mt-1">
+              <li><a class="dropdown-item fs-8 py-2 cursor-pointer" [class.fw-bold]="selectedSort() === 'newest'" (click)="applyFilters({sort: 'newest'})">Newest Arrivals</a></li>
+              <li><a class="dropdown-item fs-8 py-2 cursor-pointer" [class.fw-bold]="selectedSort() === 'price_asc'" (click)="applyFilters({sort: 'price_asc'})">Price: Low to High</a></li>
+              <li><a class="dropdown-item fs-8 py-2 cursor-pointer" [class.fw-bold]="selectedSort() === 'price_desc'" (click)="applyFilters({sort: 'price_desc'})">Price: High to Low</a></li>
+            </ul>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid px-4 py-4">
+    <!-- Empty State -->
+    <div class="text-center py-5 my-4 bg-light rounded-4" *ngIf="products().length === 0">
+      <div class="bg-white shadow-sm rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+        <i class="bi bi-search fs-3 text-muted"></i>
+      </div>
+      <h4 class="fw-bold letter-spacing-tight">No products found</h4>
+      <p class="text-muted fs-7 mb-4">We couldn't find any products matching your criteria.</p>
+      <button class="btn btn-dark rounded-pill px-4 fs-8 fw-bold text-uppercase letter-spacing-wide shadow-sm" (click)="applyFilters({category: null, minPrice: null, maxPrice: null, search: null})">
+        Clear All Filters
+      </button>
+    </div>
+
+    <!-- Grid -->
+    <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-3 g-md-4" *ngIf="products().length > 0">
+      <div class="col" *ngFor="let product of products(); let i = index" [style.animation-delay]="(i * 0.05) + 's'" class="animate-fade-in-up">
+        <app-product-card [product]="product"></app-product-card>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-center mt-5" *ngIf="totalPages() > 1">
+      <nav aria-label="Page navigation">
+        <ul class="pagination pagination-sm gap-1 m-0">
+          <li class="page-item" [class.disabled]="page() <= 1">
+            <a class="page-link rounded-circle border-0 shadow-sm d-flex align-items-center justify-content-center cursor-pointer text-dark" style="width: 35px; height: 35px;" (click)="applyFilters({page: page() - 1})">
+              <i class="bi bi-chevron-left"></i>
+            </a>
+          </li>
+          
+          <li class="page-item" *ngFor="let p of [].constructor(totalPages()); let i = index" [class.active]="page() === (i + 1)">
+            <a class="page-link rounded-circle border-0 shadow-sm d-flex align-items-center justify-content-center cursor-pointer fw-bold transition-all" 
+               style="width: 35px; height: 35px;"
+               [ngClass]="page() === (i + 1) ? 'bg-dark text-white' : 'text-dark hover-bg-light'"
+               (click)="applyFilters({page: i + 1})">
+              {{ i + 1 }}
+            </a>
+          </li>
+          
+          <li class="page-item" [class.disabled]="page() >= totalPages()">
+            <a class="page-link rounded-circle border-0 shadow-sm d-flex align-items-center justify-content-center cursor-pointer text-dark" style="width: 35px; height: 35px;" (click)="applyFilters({page: page() + 1})">
+              <i class="bi bi-chevron-right"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>

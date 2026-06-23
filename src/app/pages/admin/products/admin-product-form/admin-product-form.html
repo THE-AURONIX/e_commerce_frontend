@@ -1,0 +1,213 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h3 class="fw-bold m-0 letter-spacing-tight">{{ isEditMode ? 'Edit Product' : 'Add New Product' }}</h3>
+  <button class="btn btn-outline-secondary" routerLink="/admin/products">
+    <i class="bi bi-arrow-left me-2"></i> Back to Products
+  </button>
+</div>
+
+<div class="card border-0 shadow-sm rounded-0">
+  <div class="card-body p-4">
+    <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+      <div class="row g-4">
+        <!-- Basic Info -->
+        <div class="col-md-8">
+          <h5 class="fw-bold mb-3 border-bottom pb-2">Basic Information</h5>
+          
+          <div class="mb-3">
+            <label class="form-label fw-medium">Product Name <span class="text-danger">*</span></label>
+            <input type="text" class="form-control rounded-0" formControlName="name" placeholder="Enter product name">
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label fw-medium">Description <span class="text-danger">*</span></label>
+            <textarea class="form-control rounded-0" formControlName="description" rows="5" placeholder="Enter product description"></textarea>
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label fw-medium">Short Description</label>
+            <textarea class="form-control rounded-0" formControlName="shortDescription" rows="2" placeholder="Brief summary (optional)"></textarea>
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label fw-medium">Tags</label>
+            <input type="text" class="form-control rounded-0" formControlName="tags" placeholder="e.g. summer, casual, cotton (comma separated)">
+          </div>
+
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label class="form-label fw-medium">SKU <span class="text-danger">*</span></label>
+              <input type="text" class="form-control rounded-0" formControlName="sku" placeholder="Unique identifier">
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label fw-medium">Brand</label>
+              <input type="text" class="form-control rounded-0" formControlName="brand" placeholder="Product brand">
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label fw-medium">HSN Code <span class="text-danger">*</span></label>
+              <input type="text" class="form-control rounded-0" formControlName="hsnCode" placeholder="HSN code">
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-medium">Category <span class="text-danger">*</span></label>
+              <select class="form-select rounded-0" formControlName="category">
+                <option value="">Select a category</option>
+                <option *ngFor="let cat of mainCategories" [value]="cat._id">{{ cat.name }}</option>
+              </select>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-medium">Sub Category</label>
+              <select class="form-select rounded-0" formControlName="subCategory" [disabled]="subCategories.length === 0">
+                <option value="">Select a sub-category</option>
+                <option *ngFor="let sub of subCategories" [value]="sub._id">{{ sub.name }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Pricing & Inventory -->
+        <div class="col-md-4">
+          <h5 class="fw-bold mb-3 border-bottom pb-2">Pricing & Inventory</h5>
+          
+          <div class="mb-3">
+            <label class="form-label fw-medium">Regular Price (₹) <span class="text-danger">*</span></label>
+            <input type="number" class="form-control rounded-0" formControlName="basePrice" placeholder="0.00" min="0" step="0.01">
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label fw-medium">Sale Price (₹)</label>
+            <input type="number" class="form-control rounded-0" formControlName="comparePrice" placeholder="0.00" min="0" step="0.01">
+            <div class="form-text">Leave blank if no sale is active.</div>
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label fw-medium">Stock Quantity <span class="text-danger">*</span></label>
+            <input type="number" class="form-control rounded-0" formControlName="quantity" placeholder="0" min="0">
+          </div>
+
+          <div class="form-check form-switch mb-3 mt-4">
+            <input class="form-check-input" type="checkbox" formControlName="isActive" id="isActiveSwitch">
+            <label class="form-check-label fw-medium" for="isActiveSwitch">Product is Active</label>
+          </div>
+          
+          <div class="form-check form-switch mb-3">
+            <input class="form-check-input" type="checkbox" formControlName="isFeatured" id="isFeaturedSwitch">
+            <label class="form-check-label fw-medium" for="isFeaturedSwitch">Feature on Homepage</label>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Product Variants -->
+      <div class="mt-4 border-top pt-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fw-bold m-0">Product Variants</h5>
+          <button type="button" class="btn btn-sm btn-outline-primary" (click)="addVariant()">
+            <i class="bi bi-plus-lg me-1"></i> Add Variant
+          </button>
+        </div>
+        
+        <div formArrayName="variants">
+          <div *ngIf="variants.controls.length === 0" class="text-muted fst-italic mb-3 border p-4 text-center bg-light">
+            No variants added. The product will use the base price and inventory.
+          </div>
+          
+          <div class="card mb-3 border-0 shadow-sm bg-light" *ngFor="let v of variants.controls; let i = index" [formGroupName]="i">
+            <div class="card-body position-relative">
+              <button type="button" class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2 border-0" (click)="removeVariant(i)" title="Remove Variant">
+                <i class="bi bi-trash"></i>
+              </button>
+              
+              <h6 class="fw-bold mb-3 text-secondary">Variant {{ i + 1 }}</h6>
+              <div class="row g-3">
+                <div class="col-md-3">
+                  <label class="form-label fs-8 fw-medium">Size</label>
+                  <input type="text" class="form-control form-control-sm rounded-0" formControlName="size" placeholder="e.g. S, M, L">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label fs-8 fw-medium">Color</label>
+                  <input type="text" class="form-control form-control-sm rounded-0" formControlName="color" placeholder="e.g. Red, Blue">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label fs-8 fw-medium">Material</label>
+                  <input type="text" class="form-control form-control-sm rounded-0" formControlName="material" placeholder="e.g. Cotton">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label fs-8 fw-medium">Barcode</label>
+                  <input type="text" class="form-control form-control-sm rounded-0" formControlName="barcode" placeholder="Barcode">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label fs-8 fw-medium">Price (₹) <span class="text-danger">*</span></label>
+                  <input type="number" class="form-control form-control-sm rounded-0" formControlName="price" placeholder="0.00" min="0">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label fs-8 fw-medium">Sale Price (₹)</label>
+                  <input type="number" class="form-control form-control-sm rounded-0" formControlName="comparePrice" placeholder="0.00" min="0">
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fs-8 fw-medium">Cost Price</label>
+                  <input type="number" class="form-control form-control-sm rounded-0" formControlName="costPrice" placeholder="0.00" min="0">
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fs-8 fw-medium">Weight (g)</label>
+                  <input type="number" class="form-control form-control-sm rounded-0" formControlName="weight" placeholder="500">
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fs-8 fw-medium">Quantity <span class="text-danger">*</span></label>
+                  <input type="number" class="form-control form-control-sm rounded-0" formControlName="quantity" placeholder="0" min="0">
+                </div>
+                <div class="col-12 mt-3 border-top pt-3">
+                  <label class="form-label fs-8 fw-medium">Variant Images</label>
+                  <input type="file" class="form-control form-control-sm rounded-0" (change)="onVariantFileSelected($event, i)" accept="image/*" multiple>
+                  
+                  <!-- Variant Image Preview -->
+                  <div class="d-flex flex-wrap gap-2 mt-2" *ngIf="getVariantPreviewImages(i).length > 0 || getVariantExistingImages(i).length > 0">
+                    <div class="position-relative border p-1" *ngFor="let img of getVariantExistingImages(i); let imgIndex = index">
+                      <img [src]="img" class="object-fit-cover" style="width: 60px; height: 60px;">
+                      <span class="badge bg-secondary position-absolute top-0 start-0 m-1" style="font-size: 0.5rem">Saved</span>
+                    </div>
+                    <div class="position-relative border p-1 border-primary" *ngFor="let img of getVariantPreviewImages(i); let imgIndex = index">
+                      <img [src]="img" class="object-fit-cover" style="width: 60px; height: 60px;">
+                      <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-0 p-0" style="width: 15px; height: 15px; line-height: 1; font-size: 10px;" (click)="removeVariantSelectedImage(i, imgIndex)">&times;</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Image Upload -->
+      <div class="mt-4 border-top pt-4">
+        <h5 class="fw-bold mb-3 border-bottom pb-2">Product Images</h5>
+        <div class="mb-3">
+          <input type="file" class="form-control rounded-0" (change)="onFileSelected($event)" accept="image/*" multiple>
+          <div class="form-text">You can select up to 5 images.</div>
+        </div>
+        
+        <!-- Image Preview -->
+        <div class="d-flex flex-wrap gap-3 mt-3" *ngIf="previewImages.length > 0 || existingImages.length > 0">
+          <div class="position-relative border p-1" *ngFor="let img of existingImages; let i = index">
+            <img [src]="img.url" class="object-fit-cover" style="width: 100px; height: 100px;">
+            <span class="badge bg-secondary position-absolute top-0 start-0 m-1">Saved</span>
+            <!-- Could add delete logic later -->
+          </div>
+          <div class="position-relative border p-1 border-primary" *ngFor="let img of previewImages; let i = index">
+            <img [src]="img" class="object-fit-cover" style="width: 100px; height: 100px;">
+            <span class="badge bg-primary position-absolute top-0 start-0 m-1">New</span>
+            <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1 p-0" style="width: 20px; height: 20px; line-height: 1;" (click)="removeSelectedImage(i)">&times;</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-5 d-flex justify-content-end border-top pt-4">
+        <button type="button" class="btn btn-light rounded-0 px-4 me-3" routerLink="/admin/products">Cancel</button>
+        <button type="submit" class="btn btn-primary rounded-0 px-5" [disabled]="productForm.invalid || isSubmitting">
+          <span class="spinner-border spinner-border-sm me-2" role="status" *ngIf="isSubmitting"></span>
+          {{ isEditMode ? 'Update Product' : 'Create Product' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

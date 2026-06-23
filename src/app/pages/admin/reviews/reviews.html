@@ -1,0 +1,115 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h4 class="fw-bold m-0 letter-spacing-tight">Manage Reviews</h4>
+</div>
+
+<!-- Loading State -->
+<div *ngIf="isLoading()" class="text-center py-5">
+  <div class="spinner-border text-dark" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+<!-- Reviews Table -->
+<div class="card border-0 rounded-0 shadow-sm" *ngIf="!isLoading()">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0 fs-7">
+      <thead class="table-light text-uppercase fs-8 letter-spacing-wide">
+        <tr>
+          <th class="py-3 px-4">Product</th>
+          <th class="py-3">Customer</th>
+          <th class="py-3" style="min-width: 250px;">Review</th>
+          <th class="py-3">Status</th>
+          <th class="py-3 text-end px-4">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="reviews().length === 0">
+          <td colspan="5" class="text-center py-4 text-muted">No reviews found</td>
+        </tr>
+        <tr *ngFor="let review of reviews()">
+          <!-- Product Info -->
+          <td class="px-4 py-3">
+            <div class="d-flex align-items-center gap-3">
+              <img *ngIf="review.product?.images?.length > 0" [src]="review.product.images[0].url || review.product.images[0]" class="object-fit-cover border" style="width: 40px; height: 40px;">
+              <a [routerLink]="['/product', review.product?._id]" target="_blank" class="text-dark text-decoration-none fw-semibold text-truncate" style="max-width: 150px;">
+                {{ review.product?.name || 'Unknown Product' }}
+              </a>
+            </div>
+          </td>
+          
+          <!-- Customer Info -->
+          <td class="py-3 text-muted">
+            <div class="fw-semibold text-dark">{{ review.user?.firstName }} {{ review.user?.lastName }}</div>
+            <div class="fs-8">{{ review.user?.email }}</div>
+          </td>
+          
+          <!-- Review Content -->
+          <td class="py-3">
+            <div class="d-flex text-warning fs-8 mb-1 gap-1">
+              <i class="bi bi-star-fill" *ngFor="let s of [].constructor(Math.floor(review.rating))"></i>
+              <i class="bi bi-star-half" *ngIf="review.rating % 1 !== 0"></i>
+              <i class="bi bi-star text-muted" *ngFor="let s of [].constructor(5 - Math.ceil(review.rating))"></i>
+            </div>
+            <div class="fw-bold fs-8 mb-1">{{ review.title }}</div>
+            <div class="text-muted text-truncate" style="max-width: 300px;" [title]="review.comment">{{ review.comment || 'No comment provided' }}</div>
+            <div *ngIf="review.response?.comment" class="bg-light p-2 mt-2 fs-8 border-start border-3 border-dark text-muted">
+              <span class="fw-bold text-dark d-block">Store Response:</span>
+              {{ review.response.comment }}
+            </div>
+          </td>
+          
+          <!-- Status -->
+          <td class="py-3">
+            <span class="badge rounded-0" [ngClass]="review.isApproved ? 'bg-success text-white' : 'bg-warning text-dark'">
+              {{ review.isApproved ? 'Approved' : 'Pending' }}
+            </span>
+          </td>
+          
+          <!-- Actions -->
+          <td class="py-3 text-end px-4">
+            <div class="d-flex justify-content-end gap-2">
+              <button class="btn btn-sm rounded-0 border text-uppercase fs-8 fw-semibold" 
+                      [ngClass]="review.isApproved ? 'btn-outline-warning' : 'btn-outline-success'"
+                      (click)="toggleApproval(review)"
+                      [title]="review.isApproved ? 'Reject Review' : 'Approve Review'">
+                <i class="bi" [ngClass]="review.isApproved ? 'bi-x-circle' : 'bi-check-circle'"></i>
+                <span class="d-none d-md-inline ms-1">{{ review.isApproved ? 'Reject' : 'Approve' }}</span>
+              </button>
+              
+              <button class="btn btn-sm rounded-0 border btn-outline-dark text-uppercase fs-8 fw-semibold" 
+                      (click)="openResponseModal(review)" title="Add Response">
+                <i class="bi bi-chat-left-text"></i>
+                <span class="d-none d-md-inline ms-1">Reply</span>
+              </button>
+              
+              <button class="btn btn-sm rounded-0 border btn-outline-danger" 
+                      (click)="deleteReview(review._id)" title="Delete Review">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Response Modal Overlay -->
+<div class="modal d-block" tabindex="-1" *ngIf="showResponseModal()" style="background: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-0 border-0 shadow-lg">
+      <div class="modal-header border-bottom-0 pt-4 px-4">
+        <h5 class="modal-title fw-bold">Store Response</h5>
+        <button type="button" class="btn-close" (click)="closeResponseModal()"></button>
+      </div>
+      <div class="modal-body px-4 pb-4">
+        <p class="text-muted fs-7 mb-3">Respond publicly to {{ selectedReview()?.user?.firstName }}'s review.</p>
+        <textarea class="form-control rounded-0 fs-7" rows="4" [(ngModel)]="responseComment" placeholder="Type your response here..."></textarea>
+      </div>
+      <div class="modal-footer border-top-0 px-4 pb-4 pt-0">
+        <button type="button" class="btn btn-light rounded-0 text-uppercase fs-8 fw-semibold letter-spacing-wide px-4" (click)="closeResponseModal()">Cancel</button>
+        <button type="button" class="btn btn-dark rounded-0 text-uppercase fs-8 fw-bold letter-spacing-wide px-4" (click)="submitResponse()" [disabled]="!responseComment().trim()">Post Reply</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,127 @@
+<div class="mb-4">
+  <a routerLink="/user/profile/orders" class="text-decoration-none text-dark fs-8 fw-bold text-uppercase letter-spacing-wide">
+    <i class="bi bi-arrow-left me-2"></i>Back to Orders
+  </a>
+</div>
+
+<div *ngIf="isLoading()" class="text-center py-5">
+  <div class="spinner-border text-dark" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+<div *ngIf="!isLoading() && order()" class="card border-0 shadow-sm rounded-0 p-0 p-md-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+    <div>
+      <h4 class="fw-bold mb-1">Order Details</h4>
+      <span class="text-muted fs-8 text-uppercase letter-spacing-wide">#{{ order()?._id }}</span>
+    </div>
+    <div class="text-end">
+      <span class="badge rounded-pill px-3 py-2 text-uppercase letter-spacing-wide fs-9"
+            [ngClass]="{
+              'bg-warning text-dark': order()?.orderStatus === 'pending' || order()?.orderStatus === 'processing',
+              'bg-info text-dark': order()?.orderStatus === 'confirmed',
+              'bg-primary': order()?.orderStatus === 'shipped',
+              'bg-success': order()?.orderStatus === 'delivered',
+              'bg-danger': order()?.orderStatus === 'cancelled' || order()?.orderStatus === 'returned'
+            }">
+        {{ order()?.orderStatus }}
+      </span>
+      <div class="mt-2 text-muted fs-8" *ngIf="order()?.paymentStatus === 'refunded'">
+         <i class="bi bi-arrow-return-left text-danger me-1"></i> Refund Processed
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-5 mb-5">
+    
+    <!-- Left Column: Items & Timeline -->
+    <div class="col-lg-7">
+      <h6 class="fw-bold text-uppercase fs-8 letter-spacing-wide mb-3">Items Ordered</h6>
+      
+      <div class="d-flex align-items-center mb-3 pb-3 border-bottom" *ngFor="let item of order()?.items">
+        <div class="bg-light me-3 border" style="width: 80px; height: 80px;">
+          <img [src]="item.product.images?.[0]?.url || item.productSnapshot?.image" class="w-100 h-100 object-fit-cover">
+        </div>
+        <div class="flex-grow-1">
+          <h6 class="fw-bold mb-1 fs-7"><a [routerLink]="['/product', item.product._id]" class="text-dark text-decoration-none">{{ item.product.name || item.productSnapshot?.name }}</a></h6>
+          <p class="text-muted fs-8 mb-1">Qty: {{ item.quantity }}</p>
+          <p class="text-muted fs-8 mb-0">{{ item.unitPrice | currency:'INR' }} each</p>
+        </div>
+        <div class="text-end">
+          <span class="fw-bold fs-7">{{ item.totalPrice | currency:'INR' }}</span>
+        </div>
+      </div>
+
+      <div class="mt-5" *ngIf="order()?.timeline?.length">
+        <h6 class="fw-bold text-uppercase fs-8 letter-spacing-wide mb-3">Order Timeline</h6>
+        <div class="timeline ps-3 ms-2 border-start border-2 border-dark pb-3">
+          <div class="position-relative mb-4 ps-4" *ngFor="let ev of order()?.timeline">
+            <span class="position-absolute top-0 start-0 translate-middle p-2 bg-dark border border-light rounded-circle border-3"></span>
+            <div class="fw-bold fs-7 text-uppercase">{{ ev.status }}</div>
+            <div class="text-muted fs-8">{{ ev.timestamp | date:'medium' }}</div>
+            <div class="fs-8 mt-1">{{ ev.note }}</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Summary & Actions -->
+    <div class="col-lg-5">
+      <div class="bg-light p-4 border mb-4">
+        <h6 class="fw-bold text-uppercase fs-8 letter-spacing-wide mb-4">Order Summary</h6>
+        
+        <div class="d-flex justify-content-between mb-2">
+          <span class="fw-bold fs-7 text-muted">Subtotal</span>
+          <span class="fw-bold fs-7">{{ order()?.subtotal | currency:'INR' }}</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2 text-success" *ngIf="order()?.discount?.discountAmount">
+          <span class="fw-bold fs-7">Discount ({{ order()?.discount?.couponCode }})</span>
+          <span class="fw-bold fs-7">-{{ order()?.discount?.discountAmount | currency:'INR' }}</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+          <span class="fw-bold fs-7 text-muted">Shipping</span>
+          <span class="fw-bold fs-7">{{ order()?.shipping?.cost | currency:'INR' }}</span>
+        </div>
+        <div class="d-flex justify-content-between mt-3 pt-3 border-top">
+          <span class="fw-bold text-uppercase fs-6 letter-spacing-wide">Final Total</span>
+          <span class="fw-bolder fs-4">{{ order()?.totalAmount | currency:'INR' }}</span>
+        </div>
+
+        <div class="mt-4 pt-3 border-top">
+          <p class="mb-1"><span class="text-muted fs-8 fw-bold text-uppercase letter-spacing-wide">Payment Method:</span> <span class="fw-bold">{{ order()?.paymentMethod === 'card' ? 'Online Payment' : 'Cash on Delivery' }}</span></p>
+          <p class="mb-0"><span class="text-muted fs-8 fw-bold text-uppercase letter-spacing-wide">Payment Status:</span> <span class="fw-bold text-uppercase" [ngClass]="order()?.paymentStatus === 'paid' ? 'text-success' : order()?.paymentStatus === 'refunded' ? 'text-danger' : 'text-warning'">{{ order()?.paymentStatus }}</span></p>
+        </div>
+      </div>
+
+      <div class="bg-light p-4 border mb-4">
+        <h6 class="fw-bold text-uppercase fs-8 letter-spacing-wide mb-3">Shipping Details</h6>
+        <p class="fw-bold mb-1">{{ order()?.shipping?.address?.firstName }} {{ order()?.shipping?.address?.lastName }}</p>
+        <p class="text-muted fs-8 mb-1">{{ order()?.shipping?.address?.addressLine1 }}, {{ order()?.shipping?.address?.city }}, {{ order()?.shipping?.address?.state }} - {{ order()?.shipping?.address?.pincode }}</p>
+        <p class="text-muted fs-8 mb-0">Phone: {{ order()?.shipping?.address?.phone }}</p>
+      </div>
+
+      <div *ngIf="canCancel">
+        <button class="btn btn-outline-danger w-100 rounded-0 py-3 fw-bold text-uppercase d-flex align-items-center justify-content-center" 
+                (click)="cancelOrder()" [disabled]="isCancelling()">
+          <span *ngIf="!isCancelling()">Cancel Order</span>
+          <div class="spinner-border spinner-border-sm text-danger ms-2" role="status" *ngIf="isCancelling()">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </button>
+        <p class="text-muted fs-8 mt-2 text-center" *ngIf="order()?.paymentStatus === 'paid'">Online payments will be refunded automatically to your original payment method.</p>
+      </div>
+
+      <div *ngIf="canReturn">
+        <button class="btn btn-outline-warning w-100 rounded-0 py-3 fw-bold text-uppercase d-flex align-items-center justify-content-center" 
+                (click)="initiateReturn()">
+          <span>Return Order</span>
+        </button>
+        <p class="text-muted fs-8 mt-2 text-center">You can return items within 7 days of delivery.</p>
+      </div>
+
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,55 @@
+<div class="container py-5 mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card border-0 shadow-sm rounded-0">
+        <div class="card-body p-5">
+          <h2 class="fw-bolder mb-4 text-center letter-spacing-tight">STUDIO.</h2>
+          <h5 class="fw-semibold mb-4 text-center">Create an Account</h5>
+          
+          <div *ngIf="error" class="alert alert-danger rounded-0 fs-7 border-0">{{ error }}</div>
+          
+          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label fs-8 fw-semibold text-uppercase letter-spacing-wide text-muted">First Name</label>
+                <input type="text" class="form-control rounded-0 py-2 shadow-none border-secondary" formControlName="firstName">
+                <div *ngIf="registerForm.get('firstName')?.touched && registerForm.get('firstName')?.invalid" class="text-danger fs-8 mt-1">Required.</div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label fs-8 fw-semibold text-uppercase letter-spacing-wide text-muted">Last Name</label>
+                <input type="text" class="form-control rounded-0 py-2 shadow-none border-secondary" formControlName="lastName">
+                <div *ngIf="registerForm.get('lastName')?.touched && registerForm.get('lastName')?.invalid" class="text-danger fs-8 mt-1">Required.</div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fs-8 fw-semibold text-uppercase letter-spacing-wide text-muted">Email Address</label>
+              <input type="email" class="form-control rounded-0 py-2 shadow-none border-secondary" formControlName="email">
+              <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid" class="text-danger fs-8 mt-1">Valid email is required.</div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fs-8 fw-semibold text-uppercase letter-spacing-wide text-muted">Mobile Number</label>
+              <input type="tel" class="form-control rounded-0 py-2 shadow-none border-secondary" formControlName="phone" placeholder="e.g. 9876543210">
+              <div *ngIf="registerForm.get('phone')?.touched && registerForm.get('phone')?.invalid" class="text-danger fs-8 mt-1">Valid 10-digit Indian mobile number required.</div>
+            </div>
+            
+            <div class="mb-4">
+              <label class="form-label fs-8 fw-semibold text-uppercase letter-spacing-wide text-muted">Password</label>
+              <input type="password" class="form-control rounded-0 py-2 shadow-none border-secondary" formControlName="password">
+              <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid" class="text-danger fs-8 mt-1">Password must be at least 6 characters.</div>
+            </div>
+            
+            <button type="submit" class="btn btn-dark w-100 rounded-0 py-3 text-uppercase fw-bold fs-7 mb-4" [disabled]="isLoading">
+              {{ isLoading ? 'Creating Account...' : 'Create Account' }}
+            </button>
+          </form>
+          
+          <p class="text-center text-muted fs-7 mb-0">
+            Already have an account? <a routerLink="/auth/login" class="text-dark fw-semibold text-decoration-underline">Sign In</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
