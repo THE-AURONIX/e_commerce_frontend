@@ -1,7 +1,9 @@
-<div class="card border-0 rounded-4 h-100 product-card overflow-hidden bg-white shadow-sm transition-all position-relative group">
+<div
+  class="card border-0 rounded-4 h-100 product-card overflow-hidden bg-white shadow-sm transition-all position-relative group">
   <!-- Badges -->
   <div class="position-absolute top-0 start-0 p-3 z-3 d-flex flex-column gap-2 pointer-events-none">
-    <span class="badge bg-danger rounded-pill px-3 py-2 fs-8 fw-bold letter-spacing-wide" *ngIf="product.comparePrice && product.comparePrice > product.basePrice">
+    <span class="badge bg-danger rounded-pill px-3 py-2 fs-8 fw-bold letter-spacing-wide"
+      *ngIf="product.comparePrice && product.comparePrice < product.basePrice">
       Sale
     </span>
     <span class="badge bg-dark rounded-pill px-3 py-2 fs-8 fw-bold letter-spacing-wide" *ngIf="product.isFeatured">
@@ -9,44 +11,53 @@
     </span>
   </div>
 
-  <div class="position-relative overflow-hidden bg-light cursor-pointer image-wrapper" style="padding-top: 110%;" [routerLink]="['/product', product._id]">
+  <div class="position-relative overflow-hidden bg-light cursor-pointer image-wrapper" style="padding-top: 110%;"
+    [routerLink]="['/product', product._id]">
     <!-- Primary Image -->
-    <img [src]="primaryImage" [alt]="product.name" class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover transition-transform duration-500 primary-image">
-    
+    <img [src]="primaryImage" [alt]="product.name"
+      class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover transition-transform duration-500 primary-image">
+
     <!-- Secondary Image for Hover -->
-    <img *ngIf="secondaryImage" [src]="secondaryImage" [alt]="product.name" class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover transition-opacity duration-500 secondary-image opacity-0">
-    
+    <img *ngIf="secondaryImage" [src]="secondaryImage" [alt]="product.name"
+      class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover transition-opacity duration-500 secondary-image opacity-0">
+
     <!-- Quick Action Overlay (Glassmorphism) -->
-    <div class="position-absolute top-0 end-0 p-3 d-flex flex-column gap-2 opacity-0 quick-actions transition-all translate-x-full z-3" (click)="$event.stopPropagation()">
-      <button class="action-btn rounded-circle border-0 d-flex align-items-center justify-content-center shadow" 
-              [title]="isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'" 
-              (click)="toggleWishlist($event)">
+    <div
+      class="position-absolute top-0 end-0 p-3 d-flex flex-column gap-2 opacity-0 quick-actions transition-all translate-x-full z-3"
+      (click)="$event.stopPropagation()">
+      <button class="action-btn rounded-circle border-0 d-flex align-items-center justify-content-center shadow"
+        [title]="isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'" (click)="toggleWishlist($event)">
         <i class="bi fs-6" [ngClass]="isInWishlist ? 'bi-heart-fill text-danger' : 'bi-heart text-dark'"></i>
       </button>
-      <button class="action-btn rounded-circle border-0 d-flex align-items-center justify-content-center shadow" 
-              title="Add To Cart"
-              (click)="addToCart($event)">
+      <button class="action-btn rounded-circle border-0 d-flex align-items-center justify-content-center shadow"
+        title="Add To Cart" (click)="addToCart($event)">
         <i class="bi bi-cart-plus text-dark fs-6"></i>
       </button>
     </div>
   </div>
-  
+
   <div class="card-body p-4 d-flex flex-column">
     <div class="d-flex justify-content-between align-items-start mb-2">
-      <p class="text-muted fs-8 fw-semibold text-uppercase letter-spacing-wide mb-0">{{ $any(product.category)?.name || product.category }}</p>
+      <p class="text-muted fs-8 fw-semibold text-uppercase letter-spacing-wide mb-0">{{ $any(product.category)?.name ||
+        product.category }}</p>
       <div class="d-flex align-items-center gap-1 fs-8 text-warning" *ngIf="product.ratings?.count">
         <i class="bi bi-star-fill"></i>
         <span class="text-dark fw-bold">{{ product.ratings?.average | number:'1.1-1' }}</span>
       </div>
     </div>
-    
-    <a [routerLink]="['/product', product._id]" class="h6 fw-bolder text-dark text-truncate-2 mb-3 text-decoration-none d-block cursor-pointer flex-grow-1 product-title transition-colors">
+
+    <a [routerLink]="['/product', product._id]"
+      class="h6 fw-bolder text-dark text-truncate-2 mb-3 text-decoration-none d-block cursor-pointer flex-grow-1 product-title transition-colors">
       {{ product.name }}
     </a>
-    
-    <div class="d-flex align-items-center gap-2 mt-auto">
-      <span class="fw-black fs-5 text-dark">{{ product.basePrice | currency:'INR' }}</span>
-      <span class="text-muted text-decoration-line-through fs-8 fw-medium" *ngIf="product.comparePrice">{{ product.comparePrice | currency:'INR' }}</span>
+    <div class="mt-auto pt-3">
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <h6 class="fw-bold fs-6 mb-0">{{ (product.comparePrice || product.basePrice) | currency:'INR' }}</h6>
+        <span class="text-muted text-decoration-line-through fs-8 fw-medium" *ngIf="product.comparePrice">{{ product.basePrice | currency:'INR' }}</span>
+      </div>
+      <button class="btn btn-outline-dark w-100 rounded-0 py-2 fs-8 fw-bold text-uppercase letter-spacing-wide hover-fill" (click)="addToCart($event)">
+        Add to Cart
+      </button>
     </div>
   </div>
 </div>

@@ -167,7 +167,17 @@ export class ProductDetail implements OnInit {
   }
 
   get currentPrice() {
-    return this.selectedVariant() ? this.selectedVariant().price : this.product()?.basePrice;
+    if (this.selectedVariant()) {
+      return this.selectedVariant().comparePrice || this.selectedVariant().price;
+    }
+    return this.product()?.comparePrice || this.product()?.basePrice;
+  }
+
+  get originalPrice() {
+    if (this.selectedVariant()) {
+      return this.selectedVariant().comparePrice ? this.selectedVariant().price : null;
+    }
+    return this.product()?.comparePrice ? this.product()?.basePrice : null;
   }
 
   // Expose Math to template

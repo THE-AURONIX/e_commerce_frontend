@@ -43,11 +43,11 @@ export class Navbar implements OnInit {
 
   // Customizable 5 categories for the navbar
   staticCategories = [
-    { name: 'Men', slug: 'men' },
-    { name: 'Women', slug: 'women' },
+    { name: 'Men', slug: 'mens' },
+    { name: 'Women', slug: 'womens' },
     { name: 'Kids', slug: 'kids' },
     { name: 'Electronics', slug: 'electronics' },
-    { name: 'Home & Living', slug: 'home-living' }
+    { name: 'Home & Living', slug: 'home--kitchen' }
   ];
 
   ngOnInit() {

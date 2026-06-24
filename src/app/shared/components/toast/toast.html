@@ -1,5 +1,5 @@
 <div class="toast-container position-fixed top-0 end-0 p-3 z-3" style="pointer-events: none;">
-  <div *ngFor="let toast of toastService.toasts()" class="toast show align-items-center text-white border-0 mb-2 shadow-lg animate-toast pointer-events-auto" role="alert" aria-live="assertive" aria-atomic="true"
+  <div *ngFor="let toast of toastService.toasts()" class="toast show align-items-center text-white border-0 mb-2 shadow-lg animate-toast pe-auto" role="alert" aria-live="assertive" aria-atomic="true"
        [ngClass]="{
          'bg-success': toast.type === 'success',
          'bg-danger': toast.type === 'error',

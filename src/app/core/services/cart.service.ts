@@ -88,11 +88,11 @@ export class CartService {
 
   private addLocalItem(product: Product, quantity: number, variantId: string | null) {
     const currentCart = this.cart();
-    let price = product.basePrice;
+    let price = product.comparePrice || product.basePrice;
     
     if (variantId && product.variants?.length) {
         const variant = product.variants.find(v => v._id === variantId);
-        if (variant) price = variant.price;
+        if (variant) price = variant.comparePrice || variant.price;
     }
 
     const existingIndex = currentCart.items.findIndex(

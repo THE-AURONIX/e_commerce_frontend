@@ -6,10 +6,12 @@ import { ToastService } from '../../../core/services/toast.service';
 import { ModalService } from '../../../core/services/modal.service';
 import { PaymentService } from '../../../core/services/payment.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReviewService } from '../../../core/services/review.service';
 
 @Component({
   selector: 'app-order-detail',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, ReactiveFormsModule],
   templateUrl: './order-detail.html',
   styleUrl: './order-detail.css'
 })
@@ -21,6 +23,8 @@ export class OrderDetail implements OnInit {
   private paymentService = inject(PaymentService);
   private authService = inject(AuthService);
   private ngZone = inject(NgZone);
+  private fb = inject(FormBuilder);
+  private reviewService = inject(ReviewService);
   
   orderId = '';
   order = signal<Order | null>(null);
@@ -28,6 +32,16 @@ export class OrderDetail implements OnInit {
   isCancelling = signal<boolean>(false);
   isProcessingPayment = signal<boolean>(false);
   trackingData = signal<any>(null);
+
+  isReviewModalOpen = signal<boolean>(false);
+  itemToReview = signal<any>(null);
+  hoverRating = signal<number>(0);
+  isSubmittingReview = signal<boolean>(false);
+  reviewForm: FormGroup = this.fb.group({
+    rating: [0, [Validators.required, Validators.min(1), Validators.max(5)]],
+    title: [''],
+    comment: ['']
+  });
 
   ngOnInit() {
     this.paymentService.loadRazorpayScript().catch(err => console.error(err));
@@ -189,5 +203,51 @@ export class OrderDetail implements OnInit {
       this.toastService.error('Failed to initialize payment.');
       console.error(error);
     }
+  }
+
+  trackOrder() {
+    // Navigate to tracking page or open modal
+    this.toastService.info('Detailed tracking integration coming soon!');
+  }
+
+  // Review Methods
+  openReviewModal(item: any) {
+    this.itemToReview.set(item);
+    this.isReviewModalOpen.set(true);
+    this.reviewForm.reset({ rating: 0 });
+    this.hoverRating.set(0);
+  }
+
+  closeReviewModal() {
+    this.isReviewModalOpen.set(false);
+    this.itemToReview.set(null);
+  }
+
+  setRating(val: number) {
+    this.reviewForm.patchValue({ rating: val });
+  }
+
+  submitReview() {
+    if (this.reviewForm.invalid) return;
+
+    this.isSubmittingReview.set(true);
+    const item = this.itemToReview();
+    const data = {
+      ...this.reviewForm.value,
+      productId: item.product._id,
+      orderId: this.orderId
+    };
+
+    this.reviewService.createReview(data).subscribe({
+      next: () => {
+        this.isSubmittingReview.set(false);
+        this.toastService.success('Review submitted successfully!');
+        this.closeReviewModal();
+      },
+      error: (err) => {
+        this.isSubmittingReview.set(false);
+        this.toastService.error(err.error?.message || 'Failed to submit review');
+      }
+    });
   }
 }

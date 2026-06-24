@@ -41,7 +41,12 @@
               </div>
             </td>
             <td class="py-3 font-monospace text-muted">{{product.sku}}</td>
-            <td class="py-3 fw-medium">{{ product.comparePrice || product.basePrice | currency:'INR' }} <small *ngIf="product.comparePrice" class="text-decoration-line-through text-muted ms-1">{{ product.basePrice | currency:'INR' }}</small></td>
+            <td class="py-3 fw-medium">
+              {{ (product.comparePrice || product.basePrice) | currency:'INR' }} 
+              <small *ngIf="product.comparePrice" class="text-decoration-line-through text-muted ms-1">
+                {{ product.basePrice | currency:'INR' }}
+              </small>
+            </td>
             <td class="py-3">
               <span class="badge" [ngClass]="{'bg-success': product.inventory?.quantity! > 10, 'bg-warning': product.inventory?.quantity! <= 10 && product.inventory?.quantity! > 0, 'bg-danger': product.inventory?.quantity === 0}">
                 {{product.inventory?.quantity}}

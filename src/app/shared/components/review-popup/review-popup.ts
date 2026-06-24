@@ -63,8 +63,16 @@ export class ReviewPopup implements OnInit {
     this.reviewService.getPendingReviews().subscribe({
       next: (res) => {
         if (res.success && res.pendingReviews.length > 0) {
-          this.pendingProducts.set(res.pendingReviews);
-          this.showNextProduct();
+          // Filter out reviews that have been skipped 3 or more times
+          const pending = res.pendingReviews.filter((p: any) => {
+            const skipCount = parseInt(localStorage.getItem(`review_skip_${p.orderId}_${p.product._id}`) || '0');
+            return skipCount < 3;
+          });
+
+          if (pending.length > 0) {
+            this.pendingProducts.set(pending);
+            this.showNextProduct();
+          }
         }
       }
     });
@@ -86,6 +94,13 @@ export class ReviewPopup implements OnInit {
   }
 
   dismiss() {
+    const prod = this.currentProduct();
+    if (prod) {
+      const key = `review_skip_${prod.orderId}_${prod.product._id}`;
+      const count = parseInt(localStorage.getItem(key) || '0');
+      localStorage.setItem(key, (count + 1).toString());
+    }
+    
     // Remove the current product from the queue and show next
     const updated = this.pendingProducts().slice(1);
     this.pendingProducts.set(updated);
