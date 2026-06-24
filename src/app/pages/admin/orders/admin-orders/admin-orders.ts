@@ -23,6 +23,7 @@ export class AdminOrders implements OnInit {
   currentPage = signal<number>(1);
   totalPages = signal<number>(1);
   statusFilter = signal<string>('');
+  expandedOrderId = signal<string | null>(null);
 
   ngOnInit() {
     this.loadOrders();
@@ -50,6 +51,10 @@ export class AdminOrders implements OnInit {
   onFilterChange(status: string) {
     this.statusFilter.set(status);
     this.loadOrders(1);
+  }
+
+  toggleDetails(orderId: string) {
+    this.expandedOrderId.set(this.expandedOrderId() === orderId ? null : orderId);
   }
 
   async updateStatus(id: string, status: string) {

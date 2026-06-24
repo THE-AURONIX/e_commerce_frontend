@@ -41,7 +41,7 @@ export class Login {
         if (user?.role === 'admin') {
           this.router.navigate(['/admin/dashboard']);
         } else {
-          this.router.navigate(['/user/profile']);
+          this.router.navigate(['/']);
         }
       },
       error: (err) => {

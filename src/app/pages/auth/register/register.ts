@@ -40,7 +40,7 @@ export class Register {
 
     this.authService.register(this.registerForm.value).subscribe({
       next: (res) => {
-        this.router.navigate(['/user/profile']);
+        this.router.navigate(['/']);
       },
       error: (err) => {
         this.isLoading = false;

@@ -1,9 +1,11 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { OrderService, Order } from '../../../core/services/order.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { ModalService } from '../../../core/services/modal.service';
+import { PaymentService } from '../../../core/services/payment.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-order-detail',
@@ -16,14 +18,19 @@ export class OrderDetail implements OnInit {
   private orderService = inject(OrderService);
   private toastService = inject(ToastService);
   private modalService = inject(ModalService);
+  private paymentService = inject(PaymentService);
+  private authService = inject(AuthService);
+  private ngZone = inject(NgZone);
   
   orderId = '';
   order = signal<Order | null>(null);
   isLoading = signal<boolean>(true);
   isCancelling = signal<boolean>(false);
+  isProcessingPayment = signal<boolean>(false);
   trackingData = signal<any>(null);
 
   ngOnInit() {
+    this.paymentService.loadRazorpayScript().catch(err => console.error(err));
     this.route.paramMap.subscribe(params => {
       this.orderId = params.get('id') || '';
       if (this.orderId) {
@@ -113,5 +120,74 @@ export class OrderDetail implements OnInit {
     // Check if delivered and within return window (7 days in backend)
     // Here we just check status, backend validates window
     return order.orderStatus === 'delivered';
+  }
+
+  async payNow() {
+    const currentOrder = this.order();
+    if (!currentOrder || currentOrder.paymentStatus === 'paid') return;
+
+    this.isProcessingPayment.set(true);
+
+    try {
+      const rzpOrderRes = await this.paymentService.createRazorpayOrder(currentOrder._id).toPromise();
+      const user = this.authService.currentUser();
+      
+      const options = {
+        key: rzpOrderRes.key || 'rzp_test_YourMockKeyHere',
+        amount: rzpOrderRes.razorpayOrder.amount,
+        currency: rzpOrderRes.razorpayOrder.currency,
+        name: 'Premium Minimal Store',
+        description: 'Order Payment',
+        order_id: rzpOrderRes.razorpayOrder.id,
+        prefill: {
+          name: currentOrder.shipping?.address ? `${currentOrder.shipping.address.firstName} ${currentOrder.shipping.address.lastName}` : (user?.firstName ? `${user.firstName} ${user.lastName}` : ''),
+          email: user?.email || '',
+          contact: currentOrder.shipping?.address?.phone || ''
+        },
+        handler: (response: any) => {
+          this.ngZone.run(() => {
+            this.paymentService.verifyPayment({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              orderId: currentOrder._id
+            }).subscribe({
+              next: () => {
+                this.isProcessingPayment.set(false);
+                this.toastService.success('Payment Successful!');
+                this.fetchOrderDetails();
+              },
+              error: () => {
+                this.isProcessingPayment.set(false);
+                this.toastService.error('Payment verification failed.');
+              }
+            });
+          });
+        },
+        theme: { color: '#000000' },
+        modal: {
+            ondismiss: () => {
+                this.ngZone.run(() => {
+                  this.isProcessingPayment.set(false);
+                  this.toastService.info('Payment cancelled.');
+                });
+            }
+        }
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.on('payment.failed', (response: any) => {
+        this.ngZone.run(() => {
+          this.isProcessingPayment.set(false);
+          this.toastService.error('Payment failed: ' + response.error.description);
+        });
+      });
+      rzp.open();
+      
+    } catch (error) {
+      this.isProcessingPayment.set(false);
+      this.toastService.error('Failed to initialize payment.');
+      console.error(error);
+    }
   }
 }

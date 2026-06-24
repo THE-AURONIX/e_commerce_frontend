@@ -54,13 +54,34 @@
       </div>
 
       <div class="mt-5" *ngIf="order()?.timeline?.length">
-        <h6 class="fw-bold text-uppercase fs-8 letter-spacing-wide mb-3">Order Timeline</h6>
-        <div class="timeline ps-3 ms-2 border-start border-2 border-dark pb-3">
-          <div class="position-relative mb-4 ps-4" *ngFor="let ev of order()?.timeline">
-            <span class="position-absolute top-0 start-0 translate-middle p-2 bg-dark border border-light rounded-circle border-3"></span>
-            <div class="fw-bold fs-7 text-uppercase">{{ ev.status }}</div>
-            <div class="text-muted fs-8">{{ ev.timestamp | date:'medium' }}</div>
-            <div class="fs-8 mt-1">{{ ev.note }}</div>
+        <h6 class="fw-bold text-uppercase fs-8 letter-spacing-wide mb-4">Order Progress</h6>
+        <div class="position-relative ms-3">
+          <!-- Vertical line -->
+          <div class="position-absolute h-100 border-start border-2 border-dark" style="left: 15px; top: 0; z-index: 0;"></div>
+          
+          <div class="position-relative mb-4 d-flex" *ngFor="let ev of order()?.timeline; let last = last" style="z-index: 1;">
+            <!-- Node Icon -->
+            <div class="rounded-circle d-flex align-items-center justify-content-center bg-dark text-white shadow-sm" 
+                 style="width: 32px; height: 32px; min-width: 32px;">
+              <i class="bi fs-7" 
+                 [ngClass]="{
+                   'bi-check2-all': ev.status === 'delivered',
+                   'bi-check2': ev.status === 'confirmed',
+                   'bi-box-seam': ev.status === 'packed' || ev.status === 'processing',
+                   'bi-truck': ev.status === 'shipped' || ev.status === 'out_for_delivery',
+                   'bi-cart-check': ev.status === 'pending' || ev.status === 'payment_confirmed',
+                   'bi-x-lg': ev.status === 'cancelled' || ev.status === 'return_requested',
+                   'bi-arrow-return-left': ev.status === 'returned'
+                 }"></i>
+            </div>
+            <!-- Content -->
+            <div class="ms-4 pt-1 w-100">
+              <div class="d-flex justify-content-between align-items-center">
+                <h6 class="fw-bold fs-7 mb-1 text-uppercase letter-spacing-wide">{{ ev.status.replace('_', ' ') }}</h6>
+                <small class="text-muted fs-8">{{ ev.timestamp | date:'MMM d, h:mm a' }}</small>
+              </div>
+              <p class="text-muted fs-8 mb-0">{{ ev.note }}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -92,6 +113,16 @@
         <div class="mt-4 pt-3 border-top">
           <p class="mb-1"><span class="text-muted fs-8 fw-bold text-uppercase letter-spacing-wide">Payment Method:</span> <span class="fw-bold">{{ order()?.paymentMethod === 'card' ? 'Online Payment' : 'Cash on Delivery' }}</span></p>
           <p class="mb-0"><span class="text-muted fs-8 fw-bold text-uppercase letter-spacing-wide">Payment Status:</span> <span class="fw-bold text-uppercase" [ngClass]="order()?.paymentStatus === 'paid' ? 'text-success' : order()?.paymentStatus === 'refunded' ? 'text-danger' : 'text-warning'">{{ order()?.paymentStatus }}</span></p>
+          
+          <div class="mt-4" *ngIf="order()?.paymentStatus === 'pending' && canCancel">
+             <button class="btn btn-dark w-100 rounded-0 py-3 fw-bold text-uppercase fs-7 d-flex align-items-center justify-content-center" (click)="payNow()" [disabled]="isProcessingPayment()">
+               <span *ngIf="!isProcessingPayment()">Pay Online Now</span>
+               <div class="spinner-border spinner-border-sm text-light ms-2" role="status" *ngIf="isProcessingPayment()">
+                 <span class="visually-hidden">Processing...</span>
+               </div>
+             </button>
+             <p class="text-muted fs-8 mt-2 mb-0 text-center lh-sm">Avoid cash handling by paying securely online.</p>
+          </div>
         </div>
       </div>
 

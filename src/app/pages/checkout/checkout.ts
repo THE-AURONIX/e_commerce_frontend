@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -24,6 +24,7 @@ export class Checkout implements OnInit {
   private userService = inject(UserService);
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
+  private ngZone = inject(NgZone);
 
   cart = this.cartService.cart;
   isProcessing = false;
@@ -146,6 +147,7 @@ export class Checkout implements OnInit {
       next: async (res) => {
         if (this.paymentMethod === 'cod' || res.order.totalAmount === 0) {
           this.isProcessing = false;
+          this.cartService.cart.set({ items: [] });
           this.toastService.success(res.order.totalAmount === 0 ? 'Order placed successfully!' : 'Order placed successfully via Cash on Delivery!');
           this.router.navigate(['/user/profile/orders']);
         } else {
@@ -179,37 +181,44 @@ export class Checkout implements OnInit {
           contact: selectedAddress?.phone || ''
         },
         handler: (response: any) => {
-          this.paymentService.verifyPayment({
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature,
-            orderId: orderId
-          }).subscribe({
-            next: () => {
-              this.isProcessing = false;
-              this.toastService.success('Payment Successful!');
-              this.router.navigate(['/user/profile/orders']);
-            },
-            error: () => {
-              this.isProcessing = false;
-              this.toastService.error('Payment verification failed.');
-            }
+          this.ngZone.run(() => {
+            this.paymentService.verifyPayment({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              orderId: orderId
+            }).subscribe({
+              next: () => {
+                this.isProcessing = false;
+                this.cartService.cart.set({ items: [] });
+                this.toastService.success('Payment Successful!');
+                this.router.navigate(['/user/profile/orders']);
+              },
+              error: () => {
+                this.isProcessing = false;
+                this.toastService.error('Payment verification failed.');
+              }
+            });
           });
         },
         theme: { color: '#000000' },
         modal: {
             ondismiss: () => {
-                this.isProcessing = false;
-                this.toastService.info('Payment cancelled. Your order is pending payment.');
-                this.router.navigate(['/user/profile/orders']);
+                this.ngZone.run(() => {
+                  this.isProcessing = false;
+                  this.toastService.info('Payment cancelled. Your order is pending payment.');
+                  this.router.navigate(['/user/profile/orders']);
+                });
             }
         }
       };
 
       const rzp = new (window as any).Razorpay(options);
       rzp.on('payment.failed', (response: any) => {
-        this.isProcessing = false;
-        this.toastService.error('Payment failed: ' + response.error.description);
+        this.ngZone.run(() => {
+          this.isProcessing = false;
+          this.toastService.error('Payment failed: ' + response.error.description);
+        });
       });
       rzp.open();
       
