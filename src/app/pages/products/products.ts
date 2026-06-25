@@ -21,6 +21,7 @@ export class Products implements OnInit {
 
   products = signal<Product[]>([]);
   categories = signal<Category[]>([]);
+  isLoading = signal<boolean>(true);
 
   searchQuery = signal<string>('');
   selectedCategory = signal<string>('');
@@ -80,6 +81,7 @@ export class Products implements OnInit {
   }
 
   fetchProducts() {
+    this.isLoading.set(true);
     const params: any = {};
     if (this.searchQuery()) params.search = this.searchQuery();
     if (this.selectedCategory()) params.category = this.selectedCategory();
@@ -94,8 +96,12 @@ export class Products implements OnInit {
         this.products.set(res.products);
         this.totalCount.set(res.total);
         this.totalPages.set(res.totalPages || 1);
+        this.isLoading.set(false);
       },
-      error: (err) => console.error(err)
+      error: (err) => {
+        console.error(err);
+        this.isLoading.set(false);
+      }
     });
   }
 
@@ -122,5 +128,16 @@ export class Products implements OnInit {
       queryParams: newParams,
       queryParamsHandling: 'merge'
     });
+  }
+
+  clearFilters() {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {}
+    });
+  }
+
+  hasActiveFilters(): boolean {
+    return !!(this.searchQuery() || this.selectedCategory() || this.minPrice() !== null || this.maxPrice() !== null || this.selectedSort() !== 'newest');
   }
 }

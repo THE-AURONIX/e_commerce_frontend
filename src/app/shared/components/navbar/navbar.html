@@ -164,29 +164,24 @@
 </div>
 
 <!-- Mobile Bottom Navbar -->
-<nav
-  class="mobile-bottom-nav d-lg-none fixed-bottom d-flex justify-content-around align-items-center bg-white border-top py-2 pb-3 shadow-sm w-100">
-  <a href="javascript:void(0)" (click)="setActive('Home')" class="nav-item text-center text-decoration-none"
-    [class.active-nav]="activeItem === 'Home'" [class.text-dark]="activeItem === 'Home'"
-    [class.text-muted]="activeItem !== 'Home'">
+<nav class="mobile-bottom-nav d-lg-none fixed-bottom d-flex justify-content-around align-items-center bg-white border-top py-2 pb-3 shadow-sm w-100">
+  <a routerLink="/" routerLinkActive="active-nav text-dark" [routerLinkActiveOptions]="{exact: true}"
+    class="nav-item text-center text-decoration-none text-muted">
     <i class="bi bi-house-door-fill fs-4 d-block mb-1"></i>
     <span class="d-block fs-8 fw-semibold">Home</span>
   </a>
-  <a href="javascript:void(0)" (click)="setActive('Categories')" class="nav-item text-center text-decoration-none"
-    [class.active-nav]="activeItem === 'Categories'" [class.text-dark]="activeItem === 'Categories'"
-    [class.text-muted]="activeItem !== 'Categories'">
+  <a href="javascript:void(0)" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" 
+    class="nav-item text-center text-decoration-none text-muted">
     <i class="bi bi-grid fs-4 d-block mb-1"></i>
     <span class="d-block fs-8 fw-semibold">Categories</span>
   </a>
-  <a href="javascript:void(0)" (click)="setActive('Trending')" class="nav-item text-center text-decoration-none"
-    [class.active-nav]="activeItem === 'Trending'" [class.text-dark]="activeItem === 'Trending'"
-    [class.text-muted]="activeItem !== 'Trending'">
+  <a routerLink="/products" [queryParams]="{sort: 'popular'}" routerLinkActive="active-nav text-dark"
+    class="nav-item text-center text-decoration-none text-muted">
     <i class="bi bi-star fs-4 d-block mb-1"></i>
     <span class="d-block fs-8 fw-semibold">Trending</span>
   </a>
-  <a href="javascript:void(0)" (click)="setActive('Profile')" class="nav-item text-center text-decoration-none"
-    [class.active-nav]="activeItem === 'Profile'" [class.text-dark]="activeItem === 'Profile'"
-    [class.text-muted]="activeItem !== 'Profile'">
+  <a [routerLink]="isAuthenticated() ? '/user/profile' : '/auth/login'" routerLinkActive="active-nav text-dark"
+    class="nav-item text-center text-decoration-none text-muted">
     <i class="bi bi-person fs-4 d-block mb-1"></i>
     <span class="d-block fs-8 fw-semibold">Profile</span>
   </a>

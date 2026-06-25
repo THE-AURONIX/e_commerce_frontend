@@ -52,8 +52,11 @@
         </div>
         <div class="text-end">
           <span class="fw-bold fs-7">{{ item.totalPrice | currency:'INR' }}</span>
-          <div *ngIf="order()?.orderStatus === 'delivered'" class="mt-2">
+          <div *ngIf="order()?.orderStatus === 'delivered' && !item.isReviewed" class="mt-2">
             <button class="btn btn-sm btn-outline-dark fs-9" (click)="openReviewModal(item)">Rate Item</button>
+          </div>
+          <div class="mt-2" *ngIf="item.isReviewed">
+            <span class="badge bg-success-subtle text-success fs-9">Reviewed</span>
           </div>
         </div>
       </div>
@@ -172,7 +175,7 @@
 </div>
 
 <!-- Review Modal -->
-<div class="review-overlay" *ngIf="isReviewModalOpen()">
+<div id="review-modal" class="review-overlay" *ngIf="isReviewModalOpen()">
   <div class="review-modal p-4 text-center">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h5 class="m-0 fw-bold letter-spacing-tight">Rate your item</h5>

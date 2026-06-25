@@ -38,6 +38,7 @@ export interface Product {
   brand: string;
   category: Category;
   subCategory?: string;
+  subSubCategory?: string;
   basePrice: number;
   comparePrice?: number;
   images: ProductImage[];

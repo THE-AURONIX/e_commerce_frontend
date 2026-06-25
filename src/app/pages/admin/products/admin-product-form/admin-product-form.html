@@ -49,18 +49,25 @@
           </div>
           
           <div class="row">
-            <div class="col-md-6 mb-3">
+            <div class="col-md-4 mb-3">
               <label class="form-label fw-medium">Category <span class="text-danger">*</span></label>
               <select class="form-select rounded-0" formControlName="category">
                 <option value="">Select a category</option>
                 <option *ngFor="let cat of mainCategories" [value]="cat._id">{{ cat.name }}</option>
               </select>
             </div>
-            <div class="col-md-6 mb-3">
+            <div class="col-md-4 mb-3">
               <label class="form-label fw-medium">Sub Category</label>
               <select class="form-select rounded-0" formControlName="subCategory" [disabled]="subCategories.length === 0">
                 <option value="">Select a sub-category</option>
                 <option *ngFor="let sub of subCategories" [value]="sub._id">{{ sub.name }}</option>
+              </select>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label fw-medium">Child Category</label>
+              <select class="form-select rounded-0" formControlName="subSubCategory" [disabled]="subSubCategories.length === 0">
+                <option value="">Select a child category</option>
+                <option *ngFor="let sub of subSubCategories" [value]="sub._id">{{ sub.name }}</option>
               </select>
             </div>
           </div>

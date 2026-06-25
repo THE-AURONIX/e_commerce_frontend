@@ -1,6 +1,6 @@
-/* 
+/*
     Premium Minimal E-commerce Theme
-    Typography: Inter 
+    Typography: Inter
     Aesthetics: Monochrome, Clean, High-End Fashion Retail
 */
 
@@ -17,12 +17,14 @@ html {
     --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-body {
+html, body {
     font-family: 'Inter', sans-serif;
     color: var(--primary);
     background-color: var(--secondary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    width: 100%;
 }
 
 /* Utilities */
@@ -212,11 +214,11 @@ body {
     .hero-banner {
         height: 70vh;
     }
-    
+
     .banner-split {
         height: 40vh;
     }
-    
+
     /* Ensure Add to Cart is always visible on mobile */
     .add-to-cart {
         transform: translateY(0);
@@ -227,7 +229,7 @@ body {
         margin-top: 10px;
         padding: 0.5rem !important;
     }
-    
+
     .wishlist-btn {
         opacity: 1;
         transform: translateX(0);

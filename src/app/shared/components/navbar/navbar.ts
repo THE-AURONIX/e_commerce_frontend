@@ -1,6 +1,6 @@
 import { Component, HostListener, inject, OnInit, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, Router } from '@angular/router';
+import { RouterLink, Router, RouterLinkActive } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
 import { CartService } from '../../../core/services/cart.service';
@@ -9,7 +9,7 @@ import { UserService } from '../../../core/services/user.service';
 
 @Component({
   selector: 'app-navbar',
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, RouterLinkActive],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
@@ -28,7 +28,7 @@ export class Navbar implements OnInit {
 
   isAuthenticated = this.authService.isAuthenticated;
   user = this.authService.currentUser;
-  
+
   categoryTree = signal<Category[]>([]);
 
   constructor() {

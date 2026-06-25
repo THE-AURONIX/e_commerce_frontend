@@ -216,6 +216,12 @@ export class OrderDetail implements OnInit {
     this.isReviewModalOpen.set(true);
     this.reviewForm.reset({ rating: 0 });
     this.hoverRating.set(0);
+    setTimeout(() => {
+      const el = document.getElementById('review-modal');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
   }
 
   closeReviewModal() {

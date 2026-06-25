@@ -37,6 +37,7 @@ export class AdminProductForm implements OnInit {
   categories: Category[] = [];
   mainCategories: Category[] = [];
   subCategories: Category[] = [];
+  subSubCategories: Category[] = [];
 
   ngOnInit() {
     this.initForm();
@@ -57,6 +58,16 @@ export class AdminProductForm implements OnInit {
         this.productForm.get('subCategory')?.setValue('');
       }
     });
+
+    // Listen to subCategory changes to filter subSubCategories
+    this.productForm.get('subCategory')?.valueChanges.subscribe((subCategoryId) => {
+      this.updateSubSubCategories(subCategoryId);
+      // Reset subSubCategory if the parent changed
+      const currentSubSub = this.productForm.get('subSubCategory')?.value;
+      if (currentSubSub && !this.subSubCategories.find((c) => c._id === currentSubSub)) {
+        this.productForm.get('subSubCategory')?.setValue('');
+      }
+    });
   }
 
   loadCategories() {
@@ -67,6 +78,9 @@ export class AdminProductForm implements OnInit {
         // If edit mode and already loaded a category, update subcategories
         if (this.productForm.get('category')?.value) {
           this.updateSubCategories(this.productForm.get('category')?.value);
+        }
+        if (this.productForm.get('subCategory')?.value) {
+          this.updateSubSubCategories(this.productForm.get('subCategory')?.value);
         }
         console.log('Categories: ', this.mainCategories);
       },
@@ -88,6 +102,19 @@ export class AdminProductForm implements OnInit {
     });
   }
 
+  updateSubSubCategories(parentId: string) {
+    if (!parentId) {
+      this.subSubCategories = [];
+      return;
+    }
+    this.subSubCategories = this.categories.filter((c) => {
+      if (!c.parentCategory) return false;
+      const pId =
+        typeof c.parentCategory === 'string' ? c.parentCategory : (c.parentCategory as any)._id;
+      return pId === parentId;
+    });
+  }
+
   initForm() {
     this.productForm = this.fb.group({
       name: ['', Validators.required],
@@ -99,6 +126,7 @@ export class AdminProductForm implements OnInit {
       comparePrice: [null],
       category: ['', Validators.required],
       subCategory: [''],
+      subSubCategory: [''],
       brand: [''],
       tags: [''], // Will split by comma
       quantity: [0, [Validators.required, Validators.min(0)]],
@@ -148,6 +176,7 @@ export class AdminProductForm implements OnInit {
           comparePrice: p.comparePrice,
           category: (p.category as any)?._id || p.category,
           subCategory: (p.subCategory as any)?._id || p.subCategory || '',
+          subSubCategory: (p.subSubCategory as any)?._id || p.subSubCategory || '',
           brand: p.brand,
           tags: p.tags ? p.tags.join(', ') : '',
           isActive: p.isActive,
@@ -277,6 +306,7 @@ export class AdminProductForm implements OnInit {
 
     // Clean up empty optional fields from main product
     if (!payload.subCategory) delete payload.subCategory;
+    if (!payload.subSubCategory) delete payload.subSubCategory;
     if (payload.comparePrice === '' || payload.comparePrice === null) delete payload.comparePrice;
     if (payload.brand === '') delete payload.brand;
     if (payload.shortDescription === '') delete payload.shortDescription;

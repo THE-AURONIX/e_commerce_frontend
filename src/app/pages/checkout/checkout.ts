@@ -8,6 +8,7 @@ import { PaymentService } from '../../core/services/payment.service';
 import { UserService } from '../../core/services/user.service';
 import { AuthService } from '../../core/services/auth.service';
 import { ToastService } from '../../core/services/toast.service';
+import { ModalService } from '../../core/services/modal.service';
 
 @Component({
   selector: 'app-checkout',
@@ -24,6 +25,7 @@ export class Checkout implements OnInit {
   private userService = inject(UserService);
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
+  private modalService = inject(ModalService);
   private ngZone = inject(NgZone);
 
   cart = this.cartService.cart;
@@ -112,7 +114,6 @@ export class Checkout implements OnInit {
     this.cartService.removeCoupon().subscribe();
   }
 
-  // --- Checkout Logic ---
   async placeOrder() {
     this.isProcessing = true;
 
@@ -120,6 +121,17 @@ export class Checkout implements OnInit {
 
     if (this.showNewAddressForm) {
       shippingAddress = this.addressForm.value;
+      
+      // Prompt user to save the new address
+      const saveAddress = await this.modalService.confirm('Save Address', 'Do you want to save this new address for future use?');
+      if (saveAddress) {
+        try {
+          await this.userService.addAddress({ ...shippingAddress, isDefault: false }).toPromise();
+        } catch (err) {
+          console.error("Failed to save address", err);
+          // Don't block the order if saving address fails
+        }
+      }
     } else {
       const selected = this.addresses().find(a => a._id === this.selectedAddressId);
       if (!selected) {

@@ -1,4 +1,5 @@
-import { Injectable, signal, Inject, PLATFORM_ID } from '@angular/core';
+import { Injectable, signal, Inject, inject, PLATFORM_ID } from '@angular/core';
+import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
 import { environment } from '../../../environments/environment';
@@ -80,13 +81,15 @@ export class AuthService {
     return this.http.get<{ success: boolean, message: string }>(`${this.apiUrl}/verifyemail/${token}`);
   }
 
+  private router = inject(Router);
+
   logout() {
     if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      localStorage.clear();
     }
     this.currentUser.set(null);
     this.isAuthenticated.set(false);
+    this.router.navigate(['/']);
   }
 
   private handleAuthSuccess(response: AuthResponse) {

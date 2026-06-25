@@ -1,4 +1,10 @@
-<div class="container py-5 mt-5" *ngIf="product()">
+<div class="text-center py-5 mt-5" *ngIf="isLoading()">
+  <div class="spinner-border text-dark mt-5" role="status" style="width: 3rem; height: 3rem;">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+<div class="container py-5 mt-5" *ngIf="!isLoading() && product()">
   <!-- Breadcrumb -->
   <nav aria-label="breadcrumb" class="mb-5 mt-3">
     <ol class="breadcrumb fs-8 fw-semibold text-uppercase letter-spacing-wide">
@@ -88,13 +94,13 @@
 
         <!-- Add to Cart -->
         <div class="d-flex flex-wrap gap-3 mb-5 pb-5 border-bottom">
-          <div class="d-flex align-items-center border border-dark" style="width: 120px;">
-            <button class="btn border-0 bg-transparent px-3 rounded-0 h-100" (click)="decrementQuantity()"><i class="bi bi-dash"></i></button>
+          <div class="d-flex align-items-center border border-dark" style="width: 120px;" [class.opacity-50]="isOutOfStock">
+            <button class="btn border-0 bg-transparent px-3 rounded-0 h-100" (click)="decrementQuantity()" [disabled]="isOutOfStock"><i class="bi bi-dash"></i></button>
             <input type="text" class="form-control border-0 text-center p-0 fw-bold bg-transparent" [value]="selectedQuantity()" readonly>
-            <button class="btn border-0 bg-transparent px-3 rounded-0 h-100" (click)="incrementQuantity()"><i class="bi bi-plus"></i></button>
+            <button class="btn border-0 bg-transparent px-3 rounded-0 h-100" (click)="incrementQuantity()" [disabled]="isOutOfStock"><i class="bi bi-plus"></i></button>
           </div>
-          <button class="btn btn-dark rounded-0 px-5 flex-grow-1 fw-bold text-uppercase letter-spacing-wide shadow-sm" (click)="addToCart()">
-            Add to Cart
+          <button class="btn btn-dark rounded-0 px-5 flex-grow-1 fw-bold text-uppercase letter-spacing-wide shadow-sm" (click)="addToCart()" [disabled]="isOutOfStock">
+            {{ isOutOfStock ? 'Out of Stock' : 'Add to Cart' }}
           </button>
           <button class="btn btn-outline-dark rounded-0 px-4" title="Add to Wishlist" (click)="addToWishlist()">
             <i class="bi bi-heart"></i>
@@ -106,8 +112,8 @@
           <li class="mb-2"><span class="fw-semibold text-dark me-2">SKU:</span> {{ product().sku }}</li>
           <li class="mb-2"><span class="fw-semibold text-dark me-2">Category:</span> {{ product().category.name }}</li>
           <li class="mb-2"><span class="fw-semibold text-dark me-2">Availability:</span> 
-             <span class="text-success fw-bold" *ngIf="product().isActive">In Stock</span>
-             <span class="text-danger fw-bold" *ngIf="!product().isActive">Out of Stock</span>
+             <span class="text-success fw-bold" *ngIf="!isOutOfStock && product().isActive">In Stock ({{ availableStock }})</span>
+             <span class="text-danger fw-bold" *ngIf="isOutOfStock || !product().isActive">Out of Stock</span>
           </li>
         </ul>
       </div>

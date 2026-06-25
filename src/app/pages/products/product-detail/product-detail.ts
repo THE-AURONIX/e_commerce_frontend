@@ -146,26 +146,6 @@ export class ProductDetail implements OnInit {
     this.activeImage.set(url);
   }
 
-  incrementQuantity() {
-    this.selectedQuantity.update(q => q + 1);
-  }
-
-  decrementQuantity() {
-    if (this.selectedQuantity() > 1) {
-      this.selectedQuantity.update(q => q - 1);
-    }
-  }
-
-  addToCart() {
-    const prod = this.product();
-    const variantId = this.selectedVariant() ? this.selectedVariant()._id : null;
-    this.cartService.addToCart(prod, this.selectedQuantity(), variantId);
-  }
-
-  addToWishlist() {
-    this.userService.addToWishlist(this.product()._id).subscribe();
-  }
-
   get currentPrice() {
     if (this.selectedVariant()) {
       return this.selectedVariant().comparePrice || this.selectedVariant().price;
@@ -178,6 +158,40 @@ export class ProductDetail implements OnInit {
       return this.selectedVariant().comparePrice ? this.selectedVariant().price : null;
     }
     return this.product()?.comparePrice ? this.product()?.basePrice : null;
+  }
+
+  get availableStock() {
+    if (this.selectedVariant()) {
+      return this.selectedVariant().inventory?.quantity || 0;
+    }
+    return this.product()?.inventory?.quantity || 0;
+  }
+
+  get isOutOfStock() {
+    return this.availableStock <= 0;
+  }
+
+  incrementQuantity() {
+    if (this.selectedQuantity() < this.availableStock) {
+      this.selectedQuantity.update(q => q + 1);
+    }
+  }
+
+  decrementQuantity() {
+    if (this.selectedQuantity() > 1) {
+      this.selectedQuantity.update(q => q - 1);
+    }
+  }
+
+  addToCart() {
+    if (this.isOutOfStock) return;
+    const prod = this.product();
+    const variantId = this.selectedVariant() ? this.selectedVariant()._id : null;
+    this.cartService.addToCart(prod, this.selectedQuantity(), variantId);
+  }
+
+  addToWishlist() {
+    this.userService.addToWishlist(this.product()._id).subscribe();
   }
 
   // Expose Math to template

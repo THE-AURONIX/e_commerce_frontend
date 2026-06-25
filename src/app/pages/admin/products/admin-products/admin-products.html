@@ -48,9 +48,21 @@
               </small>
             </td>
             <td class="py-3">
-              <span class="badge" [ngClass]="{'bg-success': product.inventory?.quantity! > 10, 'bg-warning': product.inventory?.quantity! <= 10 && product.inventory?.quantity! > 0, 'bg-danger': product.inventory?.quantity === 0}">
-                {{product.inventory?.quantity}}
-              </span>
+              <div *ngIf="product.variants && product.variants.length > 0; else baseInventory">
+                <div *ngFor="let variant of product.variants" class="d-flex align-items-center mb-1 fs-9">
+                  <span class="text-muted me-2 text-truncate" style="max-width: 100px;" title="{{ variant.size }} {{ variant.color }}">
+                    <span *ngIf="variant.size">{{variant.size}}</span><span *ngIf="variant.size && variant.color">/</span><span *ngIf="variant.color">{{variant.color}}</span>
+                  </span>
+                  <span class="badge" [ngClass]="{'bg-success': variant.inventory?.quantity! > 10, 'bg-warning': variant.inventory?.quantity! <= 10 && variant.inventory?.quantity! > 0, 'bg-danger': variant.inventory?.quantity === 0}">
+                    {{variant.inventory?.quantity || 0}}
+                  </span>
+                </div>
+              </div>
+              <ng-template #baseInventory>
+                <span class="badge" [ngClass]="{'bg-success': product.inventory?.quantity! > 10, 'bg-warning': product.inventory?.quantity! <= 10 && product.inventory?.quantity! > 0, 'bg-danger': product.inventory?.quantity === 0}">
+                  {{product.inventory?.quantity}}
+                </span>
+              </ng-template>
             </td>
             <td class="py-3">
               <span class="badge" [ngClass]="product.isActive ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary'">

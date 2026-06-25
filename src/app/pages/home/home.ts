@@ -26,11 +26,13 @@ export class Home implements AfterViewInit, OnDestroy {
   private animationFrameId: number = 0;
 
   constructor() {
-    this.productService.getProducts({ limit: 12 }).subscribe({
+    this.productService.getProducts({ limit: 20 }).subscribe({
       next: (res) => {
         const products = res.products || [];
         this.spotlightProducts.set(products.slice(0, 4));
-        this.newArrivals.set(products.slice(4, 12));
+        
+        const shuffled = [...products].sort(() => 0.5 - Math.random());
+        this.newArrivals.set(shuffled.slice(0, 5));
       },
       error: (err) => console.error('Error fetching products', err)
     });

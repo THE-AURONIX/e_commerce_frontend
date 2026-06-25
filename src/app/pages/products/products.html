@@ -58,14 +58,27 @@
             </ul>
           </div>
           
+          <!-- Clear Filters -->
+          <button *ngIf="hasActiveFilters()" class="btn btn-outline-danger rounded-pill px-3 fs-8 fw-bold text-uppercase letter-spacing-wide d-flex align-items-center justify-content-center flex-grow-1 flex-md-grow-0 gap-2" (click)="clearFilters()">
+            <i class="bi bi-x-circle"></i> Clear
+          </button>
+          
         </div>
       </div>
     </div>
   </div>
 
   <div class="container-fluid px-4 py-4">
+    <!-- Loading State -->
+    <div class="text-center py-5 my-5" *ngIf="isLoading()">
+      <div class="spinner-border text-dark" role="status" style="width: 3rem; height: 3rem;">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="text-muted mt-3 fw-medium letter-spacing-wide text-uppercase fs-8">Loading products...</p>
+    </div>
+
     <!-- Empty State -->
-    <div class="text-center py-5 my-4 bg-light rounded-4" *ngIf="products().length === 0">
+    <div class="text-center py-5 my-4 bg-light rounded-4" *ngIf="!isLoading() && products().length === 0">
       <div class="bg-white shadow-sm rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
         <i class="bi bi-search fs-3 text-muted"></i>
       </div>
