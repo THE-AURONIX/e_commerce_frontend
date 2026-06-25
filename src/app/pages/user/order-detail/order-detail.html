@@ -46,7 +46,12 @@
         </div>
         <div class="flex-grow-1">
           <h6 class="fw-bold mb-1 fs-7"><a [routerLink]="['/product', item.product._id]"
-              class="text-dark text-decoration-none">{{ item.product.name || item.productSnapshot?.name }}</a></h6>
+              class="text-dark text-decoration-none">{{ item.productSnapshot?.name || item.product.name }}</a></h6>
+          <div class="text-muted fs-8 mb-1" *ngIf="item.productSnapshot?.variantDetails">
+            <span *ngIf="item.productSnapshot.variantDetails.size">{{ item.productSnapshot.variantDetails.size }}</span>
+            <span *ngIf="item.productSnapshot.variantDetails.color"> | {{ item.productSnapshot.variantDetails.color }}</span>
+            <span *ngIf="item.productSnapshot.variantDetails.material"> | {{ item.productSnapshot.variantDetails.material }}</span>
+          </div>
           <p class="text-muted fs-8 mb-1">Qty: {{ item.quantity }}</p>
           <p class="text-muted fs-8 mb-0">{{ item.unitPrice | currency:'INR' }} each</p>
         </div>
